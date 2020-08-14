@@ -1,0 +1,4 @@
+*.log
+runtime
+public/student_video
+public/tmp

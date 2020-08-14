@@ -1,0 +1,43 @@
+{extend name="template/base" /}
+{block name="content"}
+<div class="page-container">
+    <div id="markdown" class="mt-20"></div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__LIB__/Validform/5.3.2/Validform.min.js"></script>
+<script type="text/javascript" src="__LIB__/showdown/1.4.2/showdown.min.js"></script>
+<script>
+    $(function () {
+        var converter = new showdown.Converter(),
+                text      = $("#markdown_tpl").html();
+        $("#markdown").html(converter.makeHtml(text));
+    })
+</script>
+{literal}
+<script type="text/plain" id="markdown_tpl">
+---
+方法
+```
+
+签发Token:   $token = \app\common\Entity\JwtEntity::encode(['user_id'=>1,'name'=>'test']);
+解密Token:   $data = \app\common\Entity\JwtEntity::decode($token);
+
+数据示例：array(6) {
+  ["iss"] => string(19) "http://www.ww01.net"  //签发者
+  ["aud"] => string(19) "http://www.ww01.net"   //接收该JWT的一方
+  ["iat"] => int(1542858741)    //签发时间
+  ["nbf"] => int(1542858741)    //(Not Before)：某个时间点后才能访问，比如设置time+30，表示当前时间30秒后才能使用
+  ["exp"] => int(1542865941)    //过期时间,默认设置了2个小时
+  ["data"] => object(stdClass)#39 (2) {   //自定义信息，不要定义敏感信息
+    ["user_id"] => int(1)
+    ["name"] => string(4) "test"
+  }
+}
+$user_id = data['data']->user_id;
+
+可根据自己业务需求进行拓展 类文件位置 /application/common/Entity/JwtEntity.php
+```
+</script>
+{/literal}
+{/block}
