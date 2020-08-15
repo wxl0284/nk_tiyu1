@@ -19,6 +19,7 @@ return [
     'not_auth_controller'     => 'Index',        // 默认无需认证控制器，多级控制器使用点语法，严格大小写，多个逗号隔开
     'require_auth_controller' => '',        // 默认需要认证控制器，多级控制器使用点语法，严格大小写，多个逗号隔开
     'not_auth_action'         => '',        // 默认无需认证方法，全部小写，多个逗号隔开
+    'not_auth_module'         => 'admin',   //全部小写，多个逗号隔开（admin模块可以访问）
     'require_auth_action'     => '',        // 默认需要认证方法，全部小写，多个逗号隔开
     'common_auth_name'        => 'common',        // 公共授权控制器名称和方法名称
     'guest_auth_on'           => false,    // 是否开启游客授权访问

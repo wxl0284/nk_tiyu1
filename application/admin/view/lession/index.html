@@ -1,0 +1,41 @@
+{extend name="template/base" /}
+{block name="title"}课程管理{/block}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/css/lession.css"/>
+{/block}
+{block name="content"}
+<div class="page-container">
+    <div class="row">
+        <div id='lession_list' class="col-md-4 col-md-offset-4" >
+            <button id='lession_add'class="btn btn-secondary radius">添加</button>
+            <table class="table table-border table-bordered table-striped" style='margin-top:1.5vh;'>
+                <thead>
+                  <tr>
+                    <th>序号</th>
+                    <th>课程名</th>
+                    <th>授课老师</th>
+                    <th>课程介绍</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>1</th>
+                    <td>表格内容</td>
+                    <td>表格内容</td>
+                    <td>表格内容</td>
+                  </tr>
+                  <tr>
+                    <th>2</th>
+                    <td>表格内容</td>
+                    <td>表格内容</td>
+                    <td>表格内容</td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+        
+    </div>
+</div>
+<!--添加课程弹窗-->
+<!--添加课程弹窗 结束-->
+{/block}

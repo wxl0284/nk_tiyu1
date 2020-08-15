@@ -1,6 +1,6 @@
 <?php
 /*
-管理课程的控制器
+标准动作视频 控制器
 */
 
 namespace app\admin\controller;
@@ -11,7 +11,7 @@ use think\facade\Session;
 use think\Db;
 //use think\Controller as think_Controller;
 
-class Lession extends Controller
+class Video extends Controller
 {
     public function index ()
     {

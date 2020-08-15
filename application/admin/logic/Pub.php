@@ -13,7 +13,8 @@ namespace app\admin\logic;
 use think\facade\Config;
 use think\exception\HttpResponseException;
 use think\facade\Request;
-use think\facade\Response;
+//use think\facade\Response;
+use think\Response;
 use think\response\Redirect;
 use think\facade\Url;
 

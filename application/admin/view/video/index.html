@@ -1,0 +1,70 @@
+{extend name="template/base" /}
+{block name="title"}标准动作视频管理{/block}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/css/video.css"/>
+{/block}
+{block name="content"}
+<div class="page-container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <div class="col-md-2">
+        <span class="select-box radius">
+          <select class="select" size="1" name="lession_name" id="lession_select">
+            <option value="0" selected>请选择课程</option>
+            <option value="1">网球</option>
+            <option value="2">舞蹈</option>
+          </select>
+        </span>
+      </div>
+      <button id='lession_add'class="btn btn-secondary radius">添加新视频</button>
+    </div>
+  </div>
+  <div class="row">
+    <div id='lession_list' class="col-md-8 col-md-offset-2">            
+        <table class="table table-border table-bordered table-striped" style='margin-top:1.5vh;'>
+            <thead>
+              <tr>
+                <th class='w_1'>序号</th>
+                <th class='w_2'>视频名称</th>
+                <th>视频介绍</th>
+                <th>封面图片</th>
+                <th class='w_3' style='text-align:center;'>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th class='w_1'>1</th>
+                <td class='w_2'>表格内容</td>
+                <td>表格内容</td>
+                <td>表格内容</td>
+                <td class='w_3' style='text-align:center;'>
+                  <button class="btn btn-secondary size-MINI radius video_show">查看</button>
+                  <button class="btn btn-primary size-MINI radius video_edit"><i class="Hui-iconfont">&#xe647;</i></button>
+                  <button class="btn btn-secondary btn-danger size-MINI radius video_edit"><i class="Hui-iconfont">&#xe6e2;</i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+    </div>
+  </div>
+</div>
+<!--添加视频弹窗-->
+<div id='new_video_add' style='display:none;border:1px solid' class="col-md-12">
+  添加新视频
+</div>
+<!--添加课程弹窗 结束-->
+{/block}
+{block name="script"}
+<script>
+  var lession_add = $('#lession_add');
+
+  lession_add.click(function () {
+    layer.open({
+      title:'上传新视频',
+      type:1,
+      content:$('#new_video_add'),
+      area: ['58vw', '60vh'],
+    })
+  })
+</script>
+{/block}
