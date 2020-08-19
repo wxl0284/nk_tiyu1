@@ -29,12 +29,35 @@ class Upload extends Controller
     }
 
     /**
-     * 文件上传
+     * 文件上传: 上传标准视频和上传封面图片都用此方法
      */
     public function upload_file()
     {
         $file = $this->request->file('file');
+        
+        //检查图片和视频的大小及格式
+        $types = ['image/png', 'image/jpg', 'image/gif', 'image/jpeg', 'video/mp4'];
+        $d = $file->getInfo();
+  
+        if ( !in_array($d['type'], $types) )
+        {
+            return ajax_return_error('文件格式错误~');
+        }
 
+        if ( $d['type'] == 'video/mp4' )
+        {
+            if ( $d['size'] > 50*1024*1024 )
+            {
+                return ajax_return_error('视频不能超过50M~');
+            }
+        }else{
+    
+            if ( $d['size'] > 150*1024 )
+            {
+                return ajax_return_error('图片不能超过150Kb~');
+            }
+        }
+        //检查图片和视频的大小及格式 结束
 
         $path = ROOT_PATH . 'public/tmp/uploads/';
         $info = $file->move($path);
@@ -43,6 +66,7 @@ class Upload extends Controller
             return ajax_return_error($file->getError());
         }
         $data = '/tmp/uploads/' . $info->getSaveName();
+        /*原框架代码：把下面的数据存入tp_file表中
         $insert = [
             'cate'     => 3,
             'name'     => $data,
@@ -52,18 +76,18 @@ class Upload extends Controller
             'size'     => $info->getInfo('size'),
             'mtime'    => time(),
         ];
-        Db::name('File')->insert($insert);
+        Db::name('File')->insert($insert);*/
 
-        return ajax_return(['name' => $data]);
+        return ajax_return(['name' => $data, 'msg'=>'上传ok']);
     }
 
 
     public function upload()
     {
-
         if(request()->isPost()){
+     
             return $this->upload_file();
-
+     
             $file = $this->request->file('file');
 
             // 要上传图片的本地路径
@@ -102,14 +126,11 @@ class Upload extends Controller
                 ];
                 Db::name('File')->insert($insert);
 
-
                 //返回图片的完整URL
                 return ajax_return(['name' => $domain . $ret['key']]);
 
             }
         }
-
-
     }
 
     /**

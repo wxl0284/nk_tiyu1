@@ -5,8 +5,8 @@
     <div id="tab_upload" class="HuiTab">
         <div class="tabBar cl">
             <span>本地上传</span>
-            <span>网络图片</span>
-            <span>历史图片</span>
+            <!-- <span>网络图片</span>
+            <span>历史图片</span> -->
         </div>
         <div class="tabCon">
             <div>
@@ -89,7 +89,16 @@
             },
             done: function (e, data) {
                 layer.close(layer_msg);
-                callback(callbackId,data.result.data.name);
+  
+                if (data.result.code == 1)
+                {
+                    layer.msg(data.result.msg);
+                }else if(data.result.code == 0)
+                {
+                    layer.msg(data.result.data.msg);                    
+                }
+                
+                setTimeout( callback, 1000, callbackId, data.result.data.name );//1秒后执行: callback(callbackId, data.result.data.name)                
             }
         });
         $('#drag').bind('drop dragover', function (e) {
@@ -124,7 +133,7 @@
         });*/
 
         // 远程图片抓取
-        $("#net-image").on('click', '#crawl-btn', function () {
+        /*$("#net-image").on('click', '#crawl-btn', function () {
             var remote_input = $("#remote-input");
             if (!remote_input.val()) {
                 layer.alert('请输入远程图片的链接');
@@ -182,7 +191,7 @@
                     });
                 }
             });
-        }
+        }*/
     });
 
     /**

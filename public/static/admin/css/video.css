@@ -4,12 +4,33 @@
 
 .w_1 {width: 1vw;}
 
-.w_2 {width: 10vw;}
+.w_7 {width: 7vw;}
 
-.w_3 {width: 3vw;}
+.w_14 {width: 14vw;}
+
+.w_18 {width: 18vw;}
 
 .w_3 button {width: 34px;}
 
 .w_3 .video_show, .w_3 .video_edit {margin-bottom: 3px;}
 
 #lession_add {margin-right: 15px; float: right;}
+
+#new_video_add table {border-spacing: 0px 21px; border-collapse: separate;}
+
+.page li a, .page li span {
+    color: #666;
+    border: 1px solid #ccc;
+    width: 30px;
+    height: 26px;
+    text-align: center;
+    line-height: 26px;
+    display: inline-block;
+    margin: 3px;
+}
+
+.page li  { display: inline-block;}
+
+.page li.active span  { background: #5a98de; color: #fff; }
+
+.page li.disabled span  { background: #e0e0e0; }

@@ -2,17 +2,20 @@
 {block name="title"}标准动作视频管理{/block}
 {block name="style"}
 <link rel="stylesheet" type="text/css" href="__STATIC__/css/video.css"/>
+<link href="/static/admin/lib/videojs/plyr.css" rel="stylesheet">
+<script src="/static/admin/lib/videojs/plyr.js"></script>
 {/block}
 {block name="content"}
 <div class="page-container">
+  {if condition="$list != 'no video'"}  
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <div class="col-md-2">
         <span class="select-box radius">
           <select class="select" size="1" name="lession_name" id="lession_select">
             <option value="0" selected>请选择课程</option>
-            <option value="1">网球</option>
-            <option value="2">舞蹈</option>
+            <option value="网球">网球</option>
+            <option value="舞蹈">舞蹈</option>
           </select>
         </span>
       </div>
@@ -20,51 +23,214 @@
     </div>
   </div>
   <div class="row">
-    <div id='lession_list' class="col-md-8 col-md-offset-2">            
+    <div id='lession_list' class="col-md-8 col-md-offset-2">        
         <table class="table table-border table-bordered table-striped" style='margin-top:1.5vh;'>
             <thead>
               <tr>
                 <th class='w_1'>序号</th>
-                <th class='w_2'>视频名称</th>
-                <th>视频介绍</th>
-                <th>封面图片</th>
-                <th class='w_3' style='text-align:center;'>操作</th>
+                <th class='w'>课程</th>
+                <th class='w_7'>视频名称</th>
+                <th class='w_14'>视频介绍</th>
+                <th class='w_18'>视频</th>
+                <th>上传者</th>
+                <th class='w_7'>上传时间</th>
+                <th style='text-align:center;'>操作</th>
               </tr>
             </thead>
             <tbody>
+              {volist name="list" id="vo" key='k'}
               <tr>
-                <th class='w_1'>1</th>
-                <td class='w_2'>表格内容</td>
-                <td>表格内容</td>
-                <td>表格内容</td>
+                <td class='w_1'>{$k}</td>
+                <td class='w'>{$vo.video_lession}</td>
+                <td class='w_7'>{$vo.video_name}</td>
+                <td class='w_14'>{$vo.video_info}</td>
+                <td class='w_18' style='text-align: center;'>
+                  <video poster="{$vo.video_pic}" style='width:256px;height: 144px;'>
+                    <source src="{$vo.video}" type="video/mp4">
+                  </video>
+                </td>
+                <td>{$vo.video_uploader}</td>
+                <td class='w_7'>{$vo.uploaded_time}</td>
                 <td class='w_3' style='text-align:center;'>
-                  <button class="btn btn-secondary size-MINI radius video_show">查看</button>
-                  <button class="btn btn-primary size-MINI radius video_edit"><i class="Hui-iconfont">&#xe647;</i></button>
-                  <button class="btn btn-secondary btn-danger size-MINI radius video_edit"><i class="Hui-iconfont">&#xe6e2;</i></button>
+                  <!-- <button class="btn btn-secondary size-MINI radius video_show">查看</button> -->
+                  <button class="btn btn-primary size-MINI radius video_edit" vid="{$vo.v_id}"><i class="Hui-iconfont">&#xe647;</i></button>
+                  <button class="btn btn-secondary btn-danger size-MINI radius video_del" vid="{$vo.v_id}"><i class="Hui-iconfont">&#xe6e2;</i></button>
                 </td>
               </tr>
+              {/volist}
             </tbody>
           </table>
+          <div class="page">{$list|raw}</div>
+          {else /}<div style="text-align: center;font-size: 18px;">未查到视频数据</div>
+        {/if}
     </div>
   </div>
 </div>
 <!--添加视频弹窗-->
-<div id='new_video_add' style='display:none;border:1px solid' class="col-md-12">
-  添加新视频
+<div id='new_video_add' style='display:none;' class="col-md-12">
+  <table class='col-md-8 col-md-offset-2'>
+    <tr>
+      <td>所属课程：</td>
+      <td>
+        <span class="select-box radius">
+          <select id='video_lession' class="select" size="1" name="video_lession">
+            <option value="" selected="">选择课程</option>
+            <option value="网球">网球</option>
+            <option value="舞蹈">舞蹈</option>
+          </select>
+        </span>
+      </td>
+    </tr>
+    <tr>
+      <td>视频名称：</td>
+      <td>
+        <input type="text" id='video_name' name='video_name' placeholder="视频名称" class="input-text radius size-M">
+      </td>
+    </tr>
+    <tr>
+      <td>视频简介：</td>
+      <td>
+        <textarea name="video_info" id='video_info' cols="" rows="" class="textarea radius" placeholder="视频简介，5-50个字"></textarea>
+      </td>
+    </tr>
+    <tr>
+      <td>视频封面图片：</td>
+      <!-- <td>
+        <span class="btn-upload form-group">
+          <input class="input-text upload-url radius" type="text" name="video_pic" id="video_pic" readonly="readonly">
+          <a href="javascript:void();" class="btn btn-primary radius upload-btn" onclick="layer_open('文件上传','/admin/upload/index/id/upload.html')"><i class="Hui-iconfont">&#xe642;</i>上传图片</a>
+          <input type="file" multiple="" name="file-1" class="input-file">
+        </span>
+      </td> -->
+      <td>       
+        <input class="input-text upload-url radius" type="text" id="upload" name="video_pic" placeholder="请点后面按钮, 支持png/jpg/jpeg/gif, 最大150Kb" style='width:80%;' readonly="readonly">
+        <button type="button" class="btn btn-primary radius" onclick="layer_open('上传图片','{:\\think\\facade\\Url::build(\'Upload/index\', [\'id\' => \'upload\'])}')">上传图片</button>
+      </td>
+    </tr>
+    <tr>
+      <td>标准视频：</td>
+      <td>
+        <!-- <span class="btn-upload form-group">
+          <input class="input-text upload-url radius" type="text" name="video" id="video_path" readonly="readonly">
+          <a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i>上传视频</a>
+          <input type="file" multiple="" name="file-1" class="input-file">
+        </span> -->
+        <input class="input-text upload-url radius" type="text" id="upload2" name="video" placeholder="请点后面按钮,支持mp4,最大50M" style='width:80%;' readonly="readonly">
+        <button type="button" class="btn btn-primary radius" onclick="layer_open('上传视频','{:\\think\\facade\\Url::build(\'Upload/index\', [\'id\' => \'upload2\'])}')">上传视频</button>
+      </td>
+    </tr>
+    <tr style="text-align: center;">
+      <td colspan="2"><input class="btn btn-primary radius" type="submit" value="提 交" id='video_btn'></td>
+    </tr>
+  </table>
 </div>
 <!--添加课程弹窗 结束-->
 {/block}
 {block name="script"}
 <script>
-  var lession_add = $('#lession_add');
+  //美化video标签-----
+  plyr.setup();
+  $('button[data-plyr="fullscreen"]').css('display', 'none');
+  $('.plyr__play-large').css('display', 'none');
+  //美化video标签-----结束
+
+  var lession_add = $('#lession_add');//添加视频按钮
+  var video_btn = $('#video_btn');//新视频数据 提交按钮
+  var index_i = 0;
 
   lession_add.click(function () {
-    layer.open({
+    index_i = layer.open({
       title:'上传新视频',
       type:1,
       content:$('#new_video_add'),
       area: ['58vw', '60vh'],
     })
+  })
+
+//提交新视频数据
+  video_btn.click(function () {
+    let video_lession_v = $('#video_lession').val();
+    let video_name_v    = $.trim( $('#video_name').val() );
+    let video_info_v    = $.trim( $('#video_info').val() );
+    let upload_v        = $.trim( $('#upload').val() );
+    let upload2_v       = $.trim( $('#upload2').val() );
+    //校验数据
+    let msg = '';
+    if ( video_lession_v == '' )
+    {
+      msg += '请选择课程名称!<br>';
+    }
+
+    if ( video_name_v == '' )
+    {
+      msg += '请填写视频名称!<br>';
+    }
+
+    if ( video_info_v.length < 5 || video_info_v.length > 50 )
+    {
+      msg += '视频介绍应为5-50字!<br>';
+    }
+
+    if ( upload_v == '' || upload_v == 'undefined' )
+    {
+      msg += '请上传视频封面!<br>';
+    }
+
+    if ( upload2_v == '' || upload2_v == 'undefined' )
+    {
+      msg += '请上传视频!';
+    }
+
+    if ( msg != '' )
+    {
+      layer.msg(msg, {icon:2}); return;
+    }
+    //校验数据 结束
+    $.ajax({
+      url:'/admin/video/add_video',
+      type:'post',
+      dataType:'json',
+      data:{
+        'video_lession':video_lession_v,
+        'video_name':video_name_v,
+        'video_info':video_info_v,
+        'video_pic':upload_v,
+        'video':upload2_v,
+      },
+      success:function (info) {
+        if (info.code == 200)//添加成功
+        {
+          //关闭添加的弹窗
+          layer.msg(info.msg, {icon:1,time:2000});
+          setTimeout(layer.close, 2000, index_i);          
+          window.location.reload();
+        }else if(info.code == 100)
+        {
+          layer.msg(info.msg, {icon:2});
+        }
+      },
+      error:function (info) {
+        layer.msg('网络异常,请重新提交', {icon:2});
+      },
+    })
+  })
+
+  var lession_select = $('#lession_select');
+
+  lession_select.val( localStorage.getItem('lession') );//每次加载页面后都显示上次选择的值
+
+  lession_select.change(function () {
+    let v = $(this).val();
+    let a = location.href;
+    let p = a.indexOf('/');
+    a = a.substring(0, p);
+    localStorage.setItem('lession', v);
+    location.href = a + '?lession=' + v;
+  })
+
+  var video_edit = $('.video_edit')
+  $('#lession_list button.video_edit').on('click', function () {
+    layer.msg('edit');
   })
 </script>
 {/block}
