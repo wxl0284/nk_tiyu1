@@ -66,7 +66,7 @@
     </div>
   </div>
 </div>
-<!--添加视频弹窗-->
+<!--添加视频 弹窗-->
 <div id='new_video_add' style='display:none;' class="col-md-12">
   <table class='col-md-8 col-md-offset-2'>
     <tr>
@@ -124,7 +124,62 @@
     </tr>
   </table>
 </div>
-<!--添加课程弹窗 结束-->
+<!--添加视频弹窗 结束-->
+
+<!--编辑视频 弹窗-->
+<div id='new_video_edit' style='display:none;' class="col-md-12">
+  <table class='col-md-8 col-md-offset-2'>
+    <tr>
+      <td>所属课程：</td>
+      <td>
+        <span class="select-box radius">
+          <select id='video_lession2' class="select" size="1" name="video_lession">
+            <option value="" selected="">选择课程</option>
+            <option value="网球">网球</option>
+            <option value="舞蹈">舞蹈</option>
+          </select>
+        </span>
+      </td>
+    </tr>
+    <tr>
+      <td>视频名称：</td>
+      <td>
+        <input type="text" id='video_name2' name='video_name' placeholder="视频名称" class="input-text radius size-M">
+      </td>
+    </tr>
+    <tr>
+      <td>视频简介：</td>
+      <td>
+        <textarea name="video_info" id='video_info2' cols="" rows="" class="textarea radius" placeholder="视频简介，5-50个字"></textarea>
+      </td>
+    </tr>
+    <!-- <tr>
+      <td>视频预览：</td>
+      <td style="text-align: center; padding:0 6vw;">       
+        <video id='video_edit_show' poster="" src='' style='width:256px;height: 144px;'></video>
+      </td>
+    </tr> -->
+    <tr>
+      <td>视频封面图片：</td>
+      <td>       
+        <input class="input-text upload-url radius" type="text" id="upload3" name="video_pic" placeholder="请点后面按钮, 支持png/jpg/jpeg/gif, 最大150Kb" style='width:80%;' readonly="readonly">
+        <button type="button" class="btn btn-primary radius" onclick="layer_open('上传图片','{:\\think\\facade\\Url::build(\'Upload/index\', [\'id\' => \'upload3\'])}')">上传图片</button>
+      </td>
+    </tr>
+    <tr>
+      <td>标准视频：</td>
+      <td>
+        <input class="input-text upload-url radius" type="text" id="upload4" name="video" placeholder="请点后面按钮,支持mp4,最大50M" style='width:80%;' readonly="readonly">
+        <button type="button" class="btn btn-primary radius" onclick="layer_open('上传视频','{:\\think\\facade\\Url::build(\'Upload/index\', [\'id\' => \'upload4\'])}')">上传视频</button>
+      </td>
+    </tr>
+    <tr style="text-align: center;">
+      <input type="hidden" id='edit_video_vid' value="">
+      <td colspan="2"><input class="btn btn-primary radius" type="submit" value="提 交" id='video_btn2'></td>
+    </tr>
+  </table>
+</div>
+<!--编辑视频 弹窗 结束-->
 {/block}
 {block name="script"}
 <script>
@@ -201,8 +256,13 @@
         if (info.code == 200)//添加成功
         {
           //关闭添加的弹窗
-          layer.msg(info.msg, {icon:1,time:2000});
-          setTimeout(layer.close, 2000, index_i);          
+          layer.msg(info.msg,
+            {icon:1,time:1800},
+            function (){
+              layer.close(index_i);
+            }
+          );
+          
           window.location.reload();
         }else if(info.code == 100)
         {
@@ -228,9 +288,158 @@
     location.href = a + '?lession=' + v;
   })
 
-  var video_edit = $('.video_edit')
+  //编辑修改视频
+  var video_lession2_e = $('#video_lession2');//所属课程
+  var video_name2_e = $('#video_name2');//视频名称
+  var video_info2_e = $('#video_info2');//视频简介
+  var upload3_e = $('#upload3');//视频封面图片
+  var upload4_e = $('#upload4');//视频
+  var edit_video_vid = $('#edit_video_vid');//被编辑视频的vid
+  var index_ii = '';//编辑弹窗的索引
+  
   $('#lession_list button.video_edit').on('click', function () {
-    layer.msg('edit');
+    let v_id = $(this).attr('vid');
+    //ajax获取 此条视频数据
+    $.ajax({
+      url: '/admin/video/edit_data',
+      type: 'post',
+      dataType: 'json',
+      data: {'v_id': v_id},
+      success: function (info) {
+        if (info.code == 200)
+        {
+          video_lession2_e.val(info.data.video_lession);
+          video_name2_e.val(info.data.video_name);
+          video_info2_e.val(info.data.video_info);
+          upload3_e.val(info.data.video_pic);
+          upload4_e.val(info.data.video);
+          edit_video_vid.val(info.data.v_id);
+
+          index_ii = layer.open({
+            title:'上传新视频',
+            type:1,
+            content:$('#new_video_edit'),
+            area: ['58vw', '60vh'],
+          })
+        }else if(info.code == 100)
+        {
+          layer.msg(info.msg);
+        }
+      },
+      error: function () {
+        layer.msg('网络异常', {icon:2})
+      }
+    })
+  })//显示视频数据 结束
+
+  //接下来提交编辑的数据
+  $('#video_btn2').click(function () {
+    let video_lession2_v = video_lession2_e.val();
+    let video_name2_v    = $.trim( video_name2_e.val() );
+    let video_info2_v    = $.trim( video_info2_e.val() );
+    let upload3_v        = $.trim( upload3_e.val() );
+    let upload4_v        = $.trim( upload4_e.val() );
+    //校验数据
+    let msg = '';
+
+    if ( video_lession2_v == '' )
+    {
+      msg += '请选择课程名称!<br>';
+    }
+
+    if ( video_name2_v == '' )
+    {
+      msg += '请填写视频名称!<br>';
+    }
+
+    if ( video_info2_v.length < 5 || video_info2_v.length > 50 )
+    {
+      msg += '视频介绍应为5-50字!<br>';
+    }
+
+    if ( upload3_v == '' || upload3_v == 'undefined' )
+    {
+      msg += '请上传视频封面!<br>';
+    }
+
+    if ( upload4_v == '' || upload4_v == 'undefined' )
+    {
+      msg += '请上传视频!';
+    }
+
+    if ( msg != '' )
+    {
+      layer.msg(msg, {icon:2}); return;
+    }
+    //校验数据 结束
+    $.ajax({
+      url:'/admin/video/edit_video',
+      type:'post',
+      dataType:'json',
+      data:{
+        'video_lession':video_lession2_v,
+        'video_name':video_name2_v,
+        'video_info':video_info2_v,
+        'video_pic':upload3_v,
+        'video':upload4_v,
+        'v_id':edit_video_vid.val()
+      },
+      success:function (info) {
+        if (info.code == 200)//添加成功
+        {
+          //关闭添加的弹窗
+          layer.msg(info.msg, 
+            {icon:1,time:1800},
+            function () {
+              layer.close(index_ii) 
+            }
+          );    
+          window.location.reload();
+        }else if(info.code == 100)
+        {
+          layer.msg(info.msg, {icon:2});
+        }
+      },
+      error:function (info) {
+        layer.msg('网络异常,请重新提交', {icon:2});
+      },
+    })
   })
+  //编辑修改视频---结束
+
+  //删除视频
+  $('#lession_list button.video_del').on('click', function () {
+    let v_id = $(this).attr('vid');
+
+    let iii = layer.confirm("删除后不可恢复，确定删除？",
+      {
+        btn: ['删除', '取消']
+      }, function () {
+        
+        $.ajax({
+          url: '/admin/video/del_video',
+          type: 'post',
+          dataType: 'json',
+          data: {'v_id': v_id},
+          success: function (info) {
+            if (info.code == 200)
+            {
+              layer.msg(info.msg, {icon:1});
+              window.location.reload();
+            }else if(info.code == 100)
+            {
+              layer.msg(info.msg, {icon:2});
+            }
+          },
+          error: function () {
+            layer.msg('网络异常', {icon:2})
+          }
+        })//ajax 结束
+
+      }, function(){
+        layer.close(iii);
+    });
+
+  })//删除视频数据 结束
 </script>
 {/block}

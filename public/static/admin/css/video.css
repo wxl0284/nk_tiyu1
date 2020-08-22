@@ -18,6 +18,8 @@
 
 #new_video_add table {border-spacing: 0px 21px; border-collapse: separate;}
 
+#new_video_edit table {border-spacing: 0px 21px; border-collapse: separate;}
+
 .page li a, .page li span {
     color: #666;
     border: 1px solid #ccc;

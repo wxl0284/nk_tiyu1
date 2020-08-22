@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<!--<title>{block name="title"}{$Think.config.mobile.name}{/block}</title>-->
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="/static/admin/mui/css/mui.min.css" rel="stylesheet">
+	<script src="/static/admin/lib/jquery/1.9.1/jquery.min.js"></script>
+	{block name="style"}{/block}
+</head>
+<body>
+	<script src="/static/admin/mui/js/mui.min.js"></script>
+	<script type="text/javascript">
+		mui.init()
+	</script>
+	<style>.mui-toast-container { bottom:50% !important;}</style>
+	{block name="content"}{/block}
+	{block name="foot"}
+		<div id='foot'>
+			<a href='/index/index/index'><img id='home_page' src='/static/index/images/cartoon.png'></a><a href='/index/video/index'><img id='video_page' src='/static/index/images/cartoon.png'></a><a href='/index/cartoon/index'><img id='cartoon_page'src='/static/index/images/cartoon.png'></a>
+		</div>
+		<script>
+			//在不同页面使底部图标颜色变化
+			let a = $('#home_page').attr('src');
+			mui.toast(a, { duration:'long', type:'div' }) ;
+		</script>
+	{/block}
+	{block name="script"}
+	{/block}
+</body>
+</html>
