@@ -30,8 +30,20 @@ class ReceiveStudentVideo extends Controller
         }
 
         $file = request()->file('file');
-        //$file_info = $file->getInfo();//文件名：$file_info['name'] 临时文件名：$file_info['tmp_name']  文件大小：$file_info['size']
-
+        $file_info = $file->getInfo();//原文件名：$file_info['name'] 临时文件名：$file_info['tmp_name']  文件大小：$file_info['size']
+		$file_name = $file_info['name']; //原文件名
+		$file_name = $explode('_', $file_name); //解析出：学生号_姓名_课程名_动作名_成绩_时间
+		
+		$d = [];
+		
+		$d['stu_num'] = $file_name[0]; //学号
+		$d['stu_name'] = $file_name[1]; //学生姓名
+		$d['lession'] = $file_name[2]; //课程
+		$d['activity'] = $file_name[3]; //动作
+		$d['grade'] = $file_name[4]; //成绩
+		$d['time'] = $file_name[5]; //时间
+		$d['video'] = $file_info['name']; //视频名称
+		
         $info = $file->move($student_video_dir, '');//移动到此目录，且使用原文件名
 
         if($info)
@@ -40,6 +52,12 @@ class ReceiveStudentVideo extends Controller
             //echo $info->getExtension();// 输出 jpg            
             //echo $info->getSaveName();// 输出 20160820/42a79759f284b767dfcb2a0197904287.jpg
             //echo $info->getFilename();// 输出 42a79759f284b767dfcb2a0197904287.jpg
+			//往云端数据库插入数据
+			
+			Db::connect('mysql://root:1234@47.111.14.134:3306/nk_tiyu#utf8')//nk_tiyu是数据库名
+			->table('tp_stu_video_grade')
+			->insert($d);
+			
             echo 'ok';
         }else{
             // 上传失败获取错误信息

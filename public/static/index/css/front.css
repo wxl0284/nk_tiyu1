@@ -14,7 +14,7 @@
 	}
 #info_div { position: relative; }
 	
-#info_div img { width: 23vw; margin: 9vw;}
+#info_div img { width: 23vw; margin: 9vw; position: relative; bottom:1vh;}
 
 #info_div div { position: absolute; top:8vh; left:43vw; }
 
@@ -27,9 +27,9 @@
 
 #notice { background-image: url('../images/notice_bg.png');background-repeat: no-repeat;
 	background-position-y: 50%; width:98%;
-	height: 4vh;
+	height: 6vh;
 	display: table;
-	margin: 0.5vh auto;
+	/*margin: 0.5vh auto;*/
 	background-size: 100%;
 	}
 	
@@ -41,14 +41,7 @@
 	max-width: 62vw;
 	}
 	
-#content {margin: 0 auto; padding-top: 1%;
-	width: 98%; background-color: #fff;}
+#content {margin: 0 auto; padding: 2.5% 0;
+	width: 98%; height:14.13vh; background-color: #fff;}
 
-#content img {width: 18%; margin: 0 3.5%; }
-/*底部样式*/
-#foot { width: 98%; margin: 0 auto; background-color: #fff;
-	position: absolute; bottom: 0;
-}
-
-#foot img { width: 18%; margin: 0 7.67%;}
-/*底部样式*/
+#content img {width: 17%; margin: 0 3.9%; }

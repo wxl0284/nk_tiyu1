@@ -27,45 +27,9 @@
 {/block}
 
 {block name="script"}
-	<script type="text/javascript">
-		var ws = null;
-		var stu_num = "{$stu_num}"; //学生号
-		var stu_name = "{$stu_name}"; //学生姓名
-		var type = "{$type}"; //类型（1 表示学生）
-		var address = "{$ip}";//训练终端的ip
-		
-		var stu_data = '' + address + '_' + stu_num + '_' + stu_name + '_' + type; //组装要发送的数据
-	
-		window.onload = connect(); //页面加载完成执行connect()
-		
-		//建立socket连接
-		function connect ()
-		{
-			let socket_ip = 'ws://' + address + ':1822';
-			
-			ws=new WebSocket( socket_ip );
-			
-	        ws.onopen=function(e){
-				ws.send('');//先发个空串 否则对方收不到
-				ws.send(stu_data);
-	        };
-	        
-	        ws.onmessage=function(e){
-	           console.log(e.data);
-	        };
-	        
-	        ws.onerror=function(e){
-	           console.log(e);
-	        };
-	        
-	        ws.onclose=function(e){
-	            console.log('连接已关闭');
-	        };
-		}
-		
-		$('#home_page').attr('src', '/static/index/images/front_active.png');
-		$('#video_page').attr('src', '/static/index/images/video.png');
+	<script type="text/javascript">		
+		$('#home_page').attr('src', '/static/index/images/front.png');
+		$('#video_page').attr('src', '/static/index/images/video_active.png');
 		$('#cartoon_page').attr('src', '/static/index/images/cartoon.png');
-		//mui.toast(address, { duration:'long', type:'div' });
 	</script>
 {/block}

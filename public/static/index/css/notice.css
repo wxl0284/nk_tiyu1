@@ -1,0 +1,17 @@
+* {padding: 0; margin: 0;}
+
+@font-face {
+	font-family: 'SourceHanSansCN Medium'; 
+	src: url('./font_file/SourceHanSansCN-Medium.otf') format('otf');
+	}
+
+.mui-title {text-align: left;}
+#header {height: 8vh; background-color: #fdd315; padding-top: 0.9vh;}
+
+#back {top: -1vh; font-size: 28px; color:#000;}
+
+#header_title { width: 88vw; font-size: 5vw; font-weight: bold; font-family: SourceHanSansCN Medium;
+	left:15vw;
+	}
+
+#add_notice { position: absolute; right: 8.6vw; }

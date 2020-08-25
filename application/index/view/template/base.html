@@ -17,15 +17,18 @@
 	{block name="content"}{/block}
 	{block name="foot"}
 		<div id='foot'>
-			<a href='/index/index/index'><img id='home_page' src='/static/index/images/cartoon.png'></a><a href='/index/video/index'><img id='video_page' src='/static/index/images/cartoon.png'></a><a href='/index/cartoon/index'><img id='cartoon_page'src='/static/index/images/cartoon.png'></a>
+			<a href='/index/index/index'><img id='home_page' src='/static/index/images/front_active.png'></a><a href='/index/video/index'><img id='video_page' src='/static/index/images/video.png'></a><a href='/index/cartoon/index'><img id='cartoon_page'src='/static/index/images/cartoon.png'></a>
 		</div>
-		<script>
-			//在不同页面使底部图标颜色变化
-			let a = $('#home_page').attr('src');
-			mui.toast(a, { duration:'long', type:'div' }) ;
-		</script>
+		<style>
+			/*底部样式*/
+			#foot { width: 100%; height:8.7vh; margin: 0 auto; background-color: #fff;
+				position: absolute; bottom: 0; }
+			
+			#foot img { width: 13%; margin: 2% 9.67% 1.5%;}
+		</style>
 	{/block}
 	{block name="script"}
+		//mui.toast(a, { duration:'long', type:'div' }) ;
 	{/block}
 </body>
 </html>
