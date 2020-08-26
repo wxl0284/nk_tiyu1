@@ -16,7 +16,7 @@
 	
 #info_div img { width: 23vw; margin: 9vw; position: relative; bottom:1vh;}
 
-#info_div div { position: absolute; top:8vh; left:43vw; }
+#info_div div { position: absolute; top:7vh; left:43vw; }
 
 #teacher { font-size: 5vw; font-family: 'SourceHanSansCN Medium';
 	font-weight: bold;
@@ -29,7 +29,7 @@
 	background-position-y: 50%; width:98%;
 	height: 6vh;
 	display: table;
-	/*margin: 0.5vh auto;*/
+	margin: 0.5vh auto;
 	background-size: 100%;
 	}
 	
@@ -41,7 +41,7 @@
 	max-width: 62vw;
 	}
 	
-#content {margin: 0 auto; padding: 2.5% 0;
+#content {margin: 0 auto; padding: 2vh 0;
 	width: 98%; height:14.13vh; background-color: #fff;}
 
 #content img {width: 17%; margin: 0 3.9%; }

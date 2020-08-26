@@ -7,15 +7,31 @@
 {block name="content"}
 	<header id='header' class="mui-bar mui-bar-nav">
 	    <a id='back' class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-	    <h1 id='header_title' class="mui-title">通知公告<span id='add_notice'>发布</span></h1>
-	    <!--<h1 id='header_title' class="mui-title">
-	    	<a id='back' class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-	    	通知公告
-	    	<span id='add_notice'>发布</span>
-	    </h1>-->
+	    <h1 id='header_title' class="mui-title">通知公告<span id='add_notice'><a href="/index/notice/add_page">发布</a></span></h1>
 	</header>
 	<div class="mui-content">
-		内容
+		<div class='notice_list'>
+			<div class='right_div inline_div'>
+				<p class="notice_title">通知公告标题通知公告标题</p>
+				<p  class="notice_head_p"><span class="notice_head">发布人：</span><span class="notice_info">吴老师</span><span class="notice_head span_head_time">发布时间：</span><span class="notice_info">20.08.25 11:12</span></p>
+			</div>
+			<div class='option inline_div'>
+				<img class='notice_edit' src='/static/index/images/notice_edit.png'>
+				<img class='notice_del' src='/static/index/images/notice_del.png'>
+			</div>			
+		</div>
+		<img class='img_hr' src='/static/index/images/line.png'>
+		
+		<div class='notice_list'>
+			<div class='right_div inline_div'>
+				<p class="notice_title">通知公告标题通知公告标题</p>
+				<p class="notice_head_p"><span class="notice_head">发布人：</span><span class="notice_info">吴老师</span><span class="notice_head span_head_time">发布时间：</span><span class="notice_info">20.08.25 11:12</span></p>
+			</div>
+			<div  class='option inline_div'>
+				<img class='notice_edit' src='/static/index/images/notice_edit.png'>
+				<img class='notice_del' src='/static/index/images/notice_del.png'>
+			</div>
+		</div>
 	</div>
 {/block}
 
@@ -24,5 +40,17 @@
 		$('#home_page').attr('src', '/static/index/images/front.png');
 		$('#video_page').attr('src', '/static/index/images/video.png');
 		$('#cartoon_page').attr('src', '/static/index/images/cartoon.png');
+		
+		$('.mui-content .notice_edit').on('click', function () {
+			mui.confirm('确认修改此通知？', '提示', ['确定', '取消'], 
+				function(e) {
+                    if (e.index == 0) {
+                       mui.toast('确定',{ duration:'short', type:'div' });
+                    } else {
+                        mui.toast('取消',{ duration:'short', type:'div' });
+                    }
+				}	
+			) ;
+		})
 	</script>
 {/block}

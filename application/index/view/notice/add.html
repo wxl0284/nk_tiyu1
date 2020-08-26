@@ -1,0 +1,77 @@
+{extend name="template/base" /}
+
+{block name="style"}
+	<link rel="stylesheet" type="text/css" href="/static/index/css/add_notice.css"/>
+{/block}
+
+{block name="content"}
+	<header id='header' class="mui-bar mui-bar-nav">
+	    <a id='back' class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	    <h1 id='header_title' class="mui-title">发布通知公告</h1>
+	</header>
+	<div class="mui-content">
+		<div>
+			<span class='title_cont'>标题</span>
+			<textarea  id='title' cols="" rows="" placeholder="请点击输入通知公告标题: 5~20字"></textarea>
+		</div>
+		<div>
+			<span class='title_cont'>内容</span>
+			<textarea  id='content' cols=""  rows=""  placeholder="请点击输入通知公告内容: 10~150字"></textarea>
+		</div>
+		<img id='pub_btn' src='/static/index/images/pub.png'>
+	</div>
+{/block}
+
+{block name="script"}
+	<script type="text/javascript">		
+		$('#home_page').attr('src', '/static/index/images/front.png');
+		$('#video_page').attr('src', '/static/index/images/video.png');
+		$('#cartoon_page').attr('src', '/static/index/images/cartoon.png');
+		
+		var title_e = $('#title'); //标题
+		var content_e = $('#content'); //内容
+		
+		$('#pub_btn').on('click', function () {
+			let v1 =  $.trim( title_e.val() );
+			let v2 =  $.trim( content_e.val() );
+			
+			let msg = '';
+			
+			if ( v1.length < 5 || v1.length > 20 )
+			{
+				msg += '标题应为5~20字！';
+			}
+			
+			if ( v2.length < 10 || v2.length > 150 )
+			{
+				msg += '内容应为10~150字！';
+			}
+			
+			if ( msg !== '' )
+			{
+				mui.toast(msg, { duration:'short', type:'div' }) ;
+				return;
+			}
+			
+			$.ajax({
+				url: '/index/notice/add',
+				type: 'post',
+				dataType: 'json',
+				data: { title: v1, content: v2},
+				success: function (info) {
+					mui.toast(info.msg, { duration:'short', type:'div' }) ;
+					
+					if( info.code == 200 )
+					{
+						setTimeout(function(){ window.location.href="/index/notice/index"} , 1000);
+					}
+				},
+				error: function (info) {
+					mui.toast('网络异常，请重新提交~', { duration:'short', type:'div' }) ;
+				},
+			})
+			
+		})//发布按钮 点击事件 结束
+		
+	</script>
+{/block}

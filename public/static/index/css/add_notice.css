@@ -1,0 +1,23 @@
+* {padding: 0; margin: 0;}
+
+/*头部样式*/
+.mui-title {text-align: left;}
+
+#header { height: 15vw; background-color: #fdd315; padding-top: 2.3vw; }
+	
+#back {font-size: 22px; color:#000;}
+
+#header_title { font-size: 4vw; font-weight: bold; width: 88vw; }
+/*头部样式  结束*/
+
+.mui-content { margin: 5.2vw auto 0;
+	width: 95%;
+	height:140vw; }
+
+.title_cont { font-size: 4vw; font-weight: bold; margin-left:1.5vw;}
+
+textarea { margin-top: 4px; font-size:4vw; border:0;}
+
+#content { height:50vw; }
+
+#pub_btn { width:100%; }
