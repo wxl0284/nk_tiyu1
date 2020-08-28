@@ -21,7 +21,8 @@
 
 .notice_list { padding: 2% 5%; display: flex; align-items: center; }
 
-.notice_title { font-size: 3.83vw; font-weight: bold; color: #39383a; }
+.notice_title { font-size: 3.83vw; font-weight: bold; color: #39383a; 
+	white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; display: inline-block;}
 
 .notice_head { font-size: 2.67vw; font-weight: bold; color: #585858; }
 
@@ -29,7 +30,7 @@
 
 .notice_list img { width:6.2vw; position: absolute; }
 
-.notice_list a { width:80vw; }
+.notice_list a { width:73vw; }
 
 .span_head_time { margin-left: 4vw; }
 

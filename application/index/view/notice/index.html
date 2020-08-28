@@ -13,17 +13,18 @@
 		
 		{volist name="list" id="vo"}
 			<div class='notice_list'>
-				<a href=''>
+				<a href='/index/notice/index/id/{$vo.id}'>
 					<span class="notice_title">{$vo.title}</span>
 					<br>
 					<span  class="notice_head_p"><span class="notice_head">发布人：</span><span class="notice_info">{$vo.adder}</span><span class="notice_head span_head_time">发布时间：</span><span class="notice_info">{$vo.time}</span></span>
 				</a>
-				<img class='notice_edit' src='/static/index/images/notice_edit.png'>
-				<img class='notice_del' src='/static/index/images/notice_del.png'>
+				<img class='notice_edit' src='/static/index/images/notice_edit.png' nid='{$vo.id}'>
+				<img class='notice_del' src='/static/index/images/notice_del.png' nid='{$vo.id}'>
 			</div>
 			<img class='img_hr' src='/static/index/images/line.png'>
 		{/volist}
 	</div>
+	<div style='height: 20vw;'></div><!--此元素用来撑起来页面内容区  避免foot遮挡内容-->                                     
 {/block}
 
 {block name="script"}
@@ -52,17 +53,23 @@
 						
 						for (let i = 0; i < n; i++ )
 						{
-							html_str += "<div class='notice_list'><a href='/xx'><div class='right_div inline_div'><p class='notice_title'>" 
-														+ info.data[i].title +
-														"</p><p  class='notice_head_p'><span class='notice_head'>发布人：</span><span class='notice_info'>"
-														+ info.data[i].adder +
-														"</span><span class='notice_head span_head_time'>发布时间：</span><span class='notice_info'>"
-														+ info.data[i].time +
-														"</span></p></div></a><div class='option inline_div'><img class='notice_edit' src='/static/index/images/notice_edit.png'><img class='notice_del' src='/static/index/images/notice_del.png'></div></div><img class='img_hr' src='/static/index/images/line.png'>";
-						
+							html_str += "<div class='notice_list'><a href=''><span class='notice_title'>" 
+								+ info.data[i].title +
+								"</span><br><span  class='notice_head_p'><span class='notice_head'>发布人：</span><span class='notice_info'>"
+								+ info.data[i].adder +
+								"</span><span class='notice_head span_head_time'>发布时间：</span><span class='notice_info'>"
+								+ info.data[i].time +
+								"</span></span></a><img class='notice_edit' src='/static/index/images/notice_edit.png' nid='"
+								+ info.data[i].id +
+								"'><img class='notice_del' src='/static/index/images/notice_del.png' nid='"
+								+ info.data[i].id +
+								"'></div><img class='img_hr' src='/static/index/images/line.png'>";
 						}
 							
 						mui_content.append(html_str);						
+					}else if (info.code == 100)
+					{
+						mui.toast('没有更多通知了~',{ duration:'short', type:'div' });
 					}
 				},
 				error: function () {
@@ -73,16 +80,50 @@
 
 		//上拉加载---------------结束
 		
-		$('.mui-content .notice_edit').on('click', function () {
+		$('#mui_content').on('click', '.notice_edit', function () {
+			let t = $(this);
+			let nid = t.attr('nid');
+			
 			mui.confirm('确认修改此通知？', '提示', ['确定', '取消'], 
 				function(e) {
-                    if (e.index == 0) {
-                       mui.toast('确定',{ duration:'short', type:'div' });
-                    } else {
-                        mui.toast('取消',{ duration:'short', type:'div' });
+                    if (e.index == 0)
+                    {
+  						window.location.href = '/index/notice/get_edit/id/' + nid;
                     }
 				}	
 			) ;
-		})
+		})//编辑结束
+		
+		$('#mui_content').on('click', '.notice_del', function () {
+			let t = $(this);
+			let nid = t.attr('nid');
+	
+			mui.confirm('确认删除此通知？', '提示', ['确定', '取消'], 
+				function(e) {
+                    if (e.index == 0)
+                    {
+                    	//执行删除
+                    	$.ajax({
+                    		url: '/index/notice/delete',
+                    		type: 'post',
+                    		data: {id: nid},
+                    		dataType: 'json',
+                    		success: function (info) {
+                    			if(info.code == 200)
+                    			{
+                    				t.parent().remove();
+                    				mui.toast(info.msg, { duration:'short', type:'div' });                    				
+                    			}else if (info.code == 100){
+                    				mui.toast(info.msg, { duration:'short', type:'div' });
+                    			}
+                    		},
+                    		error: function (info) {
+                    			mui.toast('网络异常~', { duration:'short', type:'div' });
+                    		},
+                    	})//ajax 结束
+                    }
+				}	
+			) ;
+		})//删除结束
 	</script>
 {/block}

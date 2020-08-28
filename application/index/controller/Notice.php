@@ -16,6 +16,12 @@ class Notice extends Base
     	{
     		$d['start'] = 0; //从第一条开始查
     	}
+    	
+    	if ( isset($d['id']) )
+    	{
+    		$r = Db::table('tp_notice')->where('id', $d['id'])->find();
+    		return view('detail');
+    	}
     
     	$r = Db::table('tp_notice')->order('id', 'desc')->limit($d['start'], 2)->select();
     	
@@ -23,7 +29,7 @@ class Notice extends Base
     	{
     		foreach ($r as $k => $v)
     		{
-    			$r[$k]['time'] = substr($v['time'], 0, -3); 
+    			$r[$k]['time'] = substr($v['time'], 0, -3);//把时间字段的秒去掉 
     		}
     		
     		if ($isAjax)
@@ -85,5 +91,69 @@ class Notice extends Base
 		}else{
 			return json(['code' =>100, 'msg' => '发布失败']);
 		}
+    }
+    
+    //删除通知公告
+    public function delete ()
+    {
+    	$d = input();
+    	
+    	$r = Db::table('tp_notice')->where('id', $d['id'])->delete();
+    	
+    	if ($r)
+    	{
+    		return json(['code' => 200, 'msg' => '删除OK~']);
+    	}else{
+    		return json(['code' => 100, 'msg' => '删除失败, 请重新操作~']);
+    	}
+    }
+    
+    //获取编辑的通知数据
+    public function get_edit ()
+    {
+    	$d = input();
+    	
+    	$r = Db::table('tp_notice')->where('id', $d['id'])->field('title, content')->find();
+    	
+    	if ($r)
+    	{
+    		return view('edit')->assign(['title' => $r['title'], 'content' => $r['content'], 'id' => $d['id']]);
+    	}else{
+    		return view('edit')->assign(['msg' => '读取数据失败~', 'id' => $d['id']]);
+    	}
+    	
+    }
+    
+    //编辑通知数据
+    public function edit ()
+    {
+    	$d = input();
+    	
+    	$msg = '';
+		
+		if ( !(isset($d['title']) && mb_strlen($d['title']) >= 5 && mb_strlen($d['title']) <= 20)  )
+		{
+			$msg .= '标题应为5~20字！';
+		}
+		
+		if ( !(isset($d['content']) && mb_strlen($d['content']) >= 10 && mb_strlen($d['content']) <= 150)  )
+		{
+			$msg .= '内容应为5~20字！';
+		}
+		
+		if ( $msg != '' )
+		{
+			return json(['code' =>100, 'msg' => $msg]);
+		}
+    	
+    	$r = Db::table('tp_notice')->where('id', $d['id'])->update($d);
+    	
+    	if ($r)
+    	{
+    		return json(['code' => 200, 'msg' => '编辑成功~']);
+    	}else{
+    		return json(['code' => 100, 'msg' => '编辑失败~']);;
+    	}
+    	
     }
 }
