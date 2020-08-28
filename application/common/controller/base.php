@@ -14,6 +14,6 @@ class Base extends Controller
 	protected function initialize ()
 	{
 		//if ( 未登录 ) $ajaxAuthErr = 'not_login'
-		//halt('ini');
+		//halt('ini'); $this->request->isMobile() 
 	}
 }

@@ -2,19 +2,48 @@
 namespace app\index\controller;
 
 use think\Db;
-use app\common\controller\base;
+use app\common\controller\base; //手机端页面基类 用来进行登录判断
 
 class Notice extends Base
 {	
     //通知公告首页
     public function index()
-    {
-    	if ( $this->request->isMobile() )
+    {   
+    	$d = input();
+    	$isAjax = $this->request->isAjax();
+    	
+    	if ( !isset($d['start']) )
     	{
+    		$d['start'] = 0; //从第一条开始查
+    	}
+    
+    	$r = Db::table('tp_notice')->order('id', 'desc')->limit($d['start'], 2)->select();
+    	
+    	if ($r)
+    	{
+    		foreach ($r as $k => $v)
+    		{
+    			$r[$k]['time'] = substr($v['time'], 0, -3); 
+    		}
     		
-    		return view();
-    		//return view()->assign(['ip' => $ip, 'stu_num' => $stu_num, 'stu_name' => $stu_name, 'type' => $type]);
-    	}        
+    		if ($isAjax)
+    		{
+    			return json(['code' => 200, 'data' => $r]);
+    		}else{
+    			return view()->assign(['list' => $r, 'notice' => 1]);
+    		}
+    		
+    	}else{
+    		
+    		if ($isAjax)
+    		{
+    			return json(['code' => 100, 'msg' => '未查到通知数据']);
+    		}else{
+    			return view()->assign(['notice' => 0]);
+    		}
+    	}
+		//return view();
+		//return view()->assign(['ip' => $ip, 'stu_num' => $stu_num, 'stu_name' => $stu_name, 'type' => $type]);
     }
 	
 	//显示公告添加页

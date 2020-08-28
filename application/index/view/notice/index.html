@@ -9,29 +9,20 @@
 	    <a id='back' class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
 	    <h1 id='header_title' class="mui-title">通知公告<span id='add_notice'><a href="/index/notice/add_page">发布</a></span></h1>
 	</header>
-	<div class="mui-content">
-		<div class='notice_list'>
-			<div class='right_div inline_div'>
-				<p class="notice_title">通知公告标题通知公告标题</p>
-				<p  class="notice_head_p"><span class="notice_head">发布人：</span><span class="notice_info">吴老师</span><span class="notice_head span_head_time">发布时间：</span><span class="notice_info">20.08.25 11:12</span></p>
-			</div>
-			<div class='option inline_div'>
-				<img class='notice_edit' src='/static/index/images/notice_edit.png'>
-				<img class='notice_del' src='/static/index/images/notice_del.png'>
-			</div>			
-		</div>
-		<img class='img_hr' src='/static/index/images/line.png'>
+	<div id='mui_content' class="mui-content">
 		
-		<div class='notice_list'>
-			<div class='right_div inline_div'>
-				<p class="notice_title">通知公告标题通知公告标题</p>
-				<p class="notice_head_p"><span class="notice_head">发布人：</span><span class="notice_info">吴老师</span><span class="notice_head span_head_time">发布时间：</span><span class="notice_info">20.08.25 11:12</span></p>
-			</div>
-			<div  class='option inline_div'>
+		{volist name="list" id="vo"}
+			<div class='notice_list'>
+				<a href=''>
+					<span class="notice_title">{$vo.title}</span>
+					<br>
+					<span  class="notice_head_p"><span class="notice_head">发布人：</span><span class="notice_info">{$vo.adder}</span><span class="notice_head span_head_time">发布时间：</span><span class="notice_info">{$vo.time}</span></span>
+				</a>
 				<img class='notice_edit' src='/static/index/images/notice_edit.png'>
 				<img class='notice_del' src='/static/index/images/notice_del.png'>
 			</div>
-		</div>
+			<img class='img_hr' src='/static/index/images/line.png'>
+		{/volist}
 	</div>
 {/block}
 
@@ -40,6 +31,47 @@
 		$('#home_page').attr('src', '/static/index/images/front.png');
 		$('#video_page').attr('src', '/static/index/images/video.png');
 		$('#cartoon_page').attr('src', '/static/index/images/cartoon.png');
+		
+		//上拉加载---------------
+		var mui_content = $('#mui_content');
+		var data_per_pull = 0; //每次上拉加载的数据条数
+		var html_str = ''; //待组装要插入的html
+		
+		document.addEventListener("swipeup", function () {
+			data_per_pull += 2;
+			
+			$.ajax({
+				url: '/index/notice/index',
+				type: 'post',
+				dataType: 'json',
+				data: {start: data_per_pull},
+				success: function (info) {
+					if (info.code == 200)
+					{
+						let n = info.data.length;
+						
+						for (let i = 0; i < n; i++ )
+						{
+							html_str += "<div class='notice_list'><a href='/xx'><div class='right_div inline_div'><p class='notice_title'>" 
+														+ info.data[i].title +
+														"</p><p  class='notice_head_p'><span class='notice_head'>发布人：</span><span class='notice_info'>"
+														+ info.data[i].adder +
+														"</span><span class='notice_head span_head_time'>发布时间：</span><span class='notice_info'>"
+														+ info.data[i].time +
+														"</span></p></div></a><div class='option inline_div'><img class='notice_edit' src='/static/index/images/notice_edit.png'><img class='notice_del' src='/static/index/images/notice_del.png'></div></div><img class='img_hr' src='/static/index/images/line.png'>";
+						
+						}
+							
+						mui_content.append(html_str);						
+					}
+				},
+				error: function () {
+					mui.toast('网络异常，请重试~',{ duration:'short', type:'div' });
+				},
+			})//ajax结束
+		});
+
+		//上拉加载---------------结束
 		
 		$('.mui-content .notice_edit').on('click', function () {
 			mui.confirm('确认修改此通知？', '提示', ['确定', '取消'], 
