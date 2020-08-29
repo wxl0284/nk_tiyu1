@@ -1,10 +1,5 @@
 * {padding: 0; margin: 0;}
 
-@font-face {
-	font-family: 'SourceHanSansCN Medium'; 
-	src: url('./font_file/SourceHanSansCN-Medium.otf') format('otf');
-	}
-
 .mui-title {text-align: left;}
 
 #header { background-color: #fdd315; padding-top: 0.7vw;}
@@ -37,3 +32,11 @@
 .notice_del { right: 4vw; }
 
 .notice_edit { right: 16vw; }
+
+#detail_t { font-size: 4vw; color: #39383a; font-weight: bold; }
+
+.detail_info { font-size: 3vw; color: #6c6c6c; }
+
+#detail_time { margin-left: 5vw;}
+
+#detail_content { font-size: 3.5vw; color: #39383a; font-weight: bold; text-indent: 2em;}

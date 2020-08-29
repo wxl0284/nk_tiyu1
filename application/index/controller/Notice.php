@@ -18,9 +18,14 @@ class Notice extends Base
     	}
     	
     	if ( isset($d['id']) )
-    	{
+    	{//ajax 通知详情的请求
     		$r = Db::table('tp_notice')->where('id', $d['id'])->find();
-    		return view('detail');
+			if ($r)
+			{
+				return json(['code' => 200, 'data' => $r]);
+			}else{
+				return json(['code' => 200, 'msg' => '读取通知失败~']);
+			}
     	}
     
     	$r = Db::table('tp_notice')->order('id', 'desc')->limit($d['start'], 2)->select();
@@ -48,7 +53,7 @@ class Notice extends Base
     			return view()->assign(['notice' => 0]);
     		}
     	}
-		//return view();
+		
 		//return view()->assign(['ip' => $ip, 'stu_num' => $stu_num, 'stu_name' => $stu_name, 'type' => $type]);
     }
 	

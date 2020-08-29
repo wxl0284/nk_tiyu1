@@ -10,10 +10,10 @@
 	    <h1 id='header_title' class="mui-title">通知公告<span id='add_notice'><a href="/index/notice/add_page">发布</a></span></h1>
 	</header>
 	<div id='mui_content' class="mui-content">
-		
+		{if $notice==1}
 		{volist name="list" id="vo"}
 			<div class='notice_list'>
-				<a href='/index/notice/index/id/{$vo.id}'>
+				<a class='notice_list_a' url='/index/notice/index/id/{$vo.id}'>
 					<span class="notice_title">{$vo.title}</span>
 					<br>
 					<span  class="notice_head_p"><span class="notice_head">发布人：</span><span class="notice_info">{$vo.adder}</span><span class="notice_head span_head_time">发布时间：</span><span class="notice_info">{$vo.time}</span></span>
@@ -23,8 +23,35 @@
 			</div>
 			<img class='img_hr' src='/static/index/images/line.png'>
 		{/volist}
+		{else /}<div style='text-align:center;color:#666'>暂无通知公告</div>
+		{/if}
 	</div>
-	<div style='height: 20vw;'></div><!--此元素用来撑起来页面内容区  避免foot遮挡内容-->                                     
+	<div style='height: 20vw;'></div><!--此元素用来撑起来页面内容区  避免foot遮挡内容-->                                  
+	<div id="popover" class="mui-popover mui-scroll"><!--弹出层元素 用来显示通知公告详情-->   
+		<div id='notice_detail'>
+			<div>
+				<span id='detail_t'>标题标题标题标题标题标题标题标题标题标题标题</span><br>
+				<span class='detail_info' id='detail_add'>李老师</span><span class='detail_info' id='detail_time'>2020-08-28 12:12</span>
+			</div>
+			<div id='detail_content'>
+				点击通知 在页面中弹层中显示通知详情结束,点击通知 在页面,点击通知 在页面中弹层中显示通知详点击通知 在页面中弹层中显示通知详情结束,点击通知 在页面点击haha
+			</div>
+		</div>
+	</div>
+	<style>
+	/*通知详情弹窗样式*/
+	#popover { top:150px !important; left: 0 !important; position:fixed;}
+	#notice_detail {	position: absolute;	background-color: #fff;	left: 2vw;
+		width: 96vw;	max-height:90vw; margin: 0 auto; overflow:scroll; 
+		padding: 1.5vw; border-radius: 3px;}
+	.mui-popover-arrow {display:none;}
+	/*通知详情弹窗样式 结束*/
+	/*学生身份的 通知列表样式*/
+	/*如果 是学生身份
+	.notice_list_a { width: 90vw; } .notice_edit, .notice_del, #add_notice { display:none;} */
+	/*学生身份的 通知列表样式 结束*/
+	</style>
+	<!--弹出层元素 结束-->                                  
 {/block}
 
 {block name="script"}
@@ -37,8 +64,12 @@
 		var mui_content = $('#mui_content');
 		var data_per_pull = 0; //每次上拉加载的数据条数
 		var html_str = ''; //待组装要插入的html
-		
-		document.addEventListener("swipeup", function () {
+		var not_up = 1; //如果点击页面的一个通知显示详情后 将此值变为0（即：在弹窗中禁用swipeup）
+
+		document.addEventListener("swipeup", function (event) {
+
+			if ( not_up == 0 ){ return; } //在页面弹出层里 禁用swipeup
+			
 			data_per_pull += 2;
 			
 			$.ajax({
@@ -53,7 +84,9 @@
 						
 						for (let i = 0; i < n; i++ )
 						{
-							html_str += "<div class='notice_list'><a href=''><span class='notice_title'>" 
+							html_str += "<div class='notice_list'><a class='notice_list_a' url='/index/notice/index/id/"
+								+ info.data[i].id +
+								"'><span class='notice_title'>" 
 								+ info.data[i].title +
 								"</span><br><span  class='notice_head_p'><span class='notice_head'>发布人：</span><span class='notice_info'>"
 								+ info.data[i].adder +
@@ -77,7 +110,6 @@
 				},
 			})//ajax结束
 		});
-
 		//上拉加载---------------结束
 		
 		$('#mui_content').on('click', '.notice_edit', function () {
@@ -125,5 +157,39 @@
 				}	
 			) ;
 		})//删除结束
+		
+		var notice_detail = $('#notice_detail');
+		
+		$('#mui_content').on('click', 'a', function () {
+			let url = $(this).attr('url');
+			//获取a标签对应的通知内容
+			$.ajax({
+				url: url,
+				type: 'post',
+				dataType: 'json',
+				success: function (info) {
+					if (info.code == 200)
+					{
+						$('#detail_t').html(info.data.title);
+						$('#detail_add').html(info.data.adder);
+						$('#detail_time').html(info.data.time);
+						$('#detail_content').html(info.data.content);
+					}else if(info.code == 100)
+					{
+						mui.toast(info.msg, { duration:'short', type:'div' });
+					}
+				},
+				error: function () {
+					mui.toast('网络异常~', { duration:'short', type:'div' });
+				}
+			})
+			//notice_detail.html('显示通知详情结束,详情结束,haha')
+			mui('.mui-popover').popover('toggle', document.getElementById("popover"));
+			not_up = 0; //在弹窗中禁用swipeup
+		})//点击通知 在页面中弹层中显示通知详情结束
+		
+		$(document).on('click', '.mui-backdrop', function(){
+			not_up = 1; //在弹窗中启用swipeup
+		})
 	</script>
 {/block}
