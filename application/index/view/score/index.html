@@ -1,0 +1,256 @@
+{extend name="template/base" /}
+
+{block name="style"}
+	<link rel="stylesheet" type="text/css" href="/static/admin/mui/css/mui.picker.min.css"/>
+	<script type="text/javascript" href="/static/admin/mui/js/mui.picker.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="/static/index/css/head.css"/>
+	<link rel="stylesheet" type="text/css" href="/static/index/css/score.css"/>
+{/block}
+
+{block name="content"}
+	<style>.mui-toast-container { bottom:85% !important;}</style>
+	<header id='header' class="mui-bar mui-bar-nav">
+	    <a id='back' class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	    <h1 id='header_title' class="mui-title">学生成绩</h1>
+	</header>
+
+	<div class="mui-content">
+		{if isset($have_score)}
+		<div id='select_div'>
+			<select id='stu_year' class="select1">
+				<option value="0" selected="selected">年级</option>
+            </select>
+            <select id='stu_class' class="select1">
+            	<option value="0" selected="selected">班级</option>
+            </select>
+            <select id='lession' class="select1">
+            	<option value="0" selected="selected">课程</option>
+            </select>
+            <select id='activity' class="select2">
+            	<option value="0" selected="selected">动作</option>
+            </select>
+            <button id='search' type="button" class="mui-btn mui-btn-outlined" data-loading-text="查询中...">查  询</button>
+		</div><!--id='select_div' 结束-->
+		<div id='stu_list'>
+			
+		</div><!--id='stu_list' 列表结束-->
+		<div style='height: 18vw;clear:both;'></div><!--此元素用来撑起来页面内容区  避免foot遮挡内容-->
+		{else /}<div style='text-align: center;font-size: 4vw; color: #666;'>暂无学生成绩数据~</div>
+		{/if}
+	</div><!--class="mui-content" 结束-->
+	<!--弹出层  开始-->
+	<div id="popover" class="mui-popover mui-scroll"><!--弹出层 显示某学生的某个动作的信息--> 
+		<div id='notice_detail'>
+			<span id='pop_again'>第一次弹</span>
+		</div>
+	</div>
+	<div id="popover2" class="mui-popover mui-scroll"><!--弹出层 显示某学生的某个动作的某一次练习的记录信息-->
+		<div id='test'>
+			<span>第二次弹了</span>
+			<br>
+			<span id='close_pop2'>关闭 第二次的弹窗</span>
+		</div>
+	</div>
+	<!--弹出层  结束-->
+	<style>
+	/*通知详情弹窗样式*/
+	#popover { top:150px !important; left: 0 !important; position:fixed;}
+	#notice_detail { position: absolute; background-color: #fff; left: 2vw;
+		width: 96vw; max-height:90vw; margin: 0 auto; overflow:scroll; 
+		padding: 1.5vw; border-radius: 3px;}
+	.mui-popover-arrow {display:none;}
+	/*通知详情弹窗样式 结束*/
+	</style>
+{/block}
+
+{block name="script"}
+	<script type="text/javascript">
+		$('#home_page').attr('src', '/static/index/images/front.png');
+		$('#video_page').attr('src', '/static/index/images/video.png');
+		$('#cartoon_page').attr('src', '/static/index/images/cartoon.png');
+		
+		var year_e = $('#stu_year'); //年级选项
+		var lession_e = $('#lession'); //课程选项
+		var class_e = $('#stu_class'); //班级选项
+		var act_e = $('#activity'); //动作选项
+		
+		//页面4个下拉框的点击事件，每次点击就加载alldata表中的对应字段，作为option选项
+		$('#select_div').on('click', 'select', function (e) {
+			
+			let opt = e.target.attributes.id.value;//每个select的id值			
+			let field = null; //要查询的字段，即option选项对应的字段
+			let opt_str = '';//要写入下拉框的option字符串
+			let opt_name = '';//每个下拉框的第一个提示选项
+			let t = $(e.target);//将当前元素转为jquery对象
+			let other_field = ''; //选择班级或动作时，提交的年级或课程选项
+			
+			switch(opt) {
+			    case 'stu_year':
+			        field = 'grade';
+			        opt_name = '年级';
+			        break;
+			    case 'stu_class':
+			        field = 'class';
+			        other_field = year_e.val();//加载班级选项时 如果已选择年级，则仅加载此年级的班级选项
+			        opt_name = '班级';
+			        break;
+			    case 'lession':
+			        field = 'lesson';
+			        opt_name = '课程';
+			        break;
+			    case 'activity':
+			        field = 'activity';
+			        other_field = lession_e.val();//加载动作选项时 如果已选择课程，则仅加载此课程的动作选项
+			        opt_name = '动作';
+			        break;
+			}
+			
+			$.ajax({
+				type:"post",
+				url:"/index/score/get_select_data",
+				data:{
+					param: field,
+					other: other_field,
+				},
+				dataType:'json',
+				success: function (info){
+					if (info.code == 200)
+					{
+						opt_str += '<option value="0" selected="selected">'	+ opt_name  +'</option>';
+						
+						for(let i=0; i<info.data.length; i++)
+						{
+							opt_str += '<option value="'
+									+ info.data[i] + '">'
+									+ info.data[i] + '</option>';
+						}
+						
+						t.html(opt_str);
+						
+					}else if(info.code == 100){
+						mui.toast(info.msg, { duration:'short', type:'div'});
+					}
+				},
+				error: function (){
+					mui.toast('网络异常~', { duration:'short', type:'div'});
+				}
+			});//ajax 结束
+			
+		})//页面4个下拉框的点击事件 结束
+		
+		//查询按钮 点击事件
+		var stu_list_e = $('#stu_list');//查询到的数据 append到此元素中
+		
+		$('#search').click(function () {
+			
+			if ( year_e.val() === '0' && lession_e.val() === '0' && class_e.val() === '0' && act_e.val() === '0' )
+			{
+				mui.toast('请至少选择一个选项~', { duration:'short', type:'div'});
+				return;
+			}
+			
+			$.ajax({
+				type:"post",
+				url:"/index/score/get_student_data",
+				data:{
+					grade: year_e.val(),
+					class: class_e.val(),
+					lesson: lession_e.val(),
+					activity: act_e.val()
+				},
+				dataType:'json',
+				success: function (info){
+					let str = '';//组装的字符串
+					
+					if (info.code == 200)
+					{
+						let num = info.data.length;
+						
+						for(let i=0; i<num; i++)
+						{
+							str += "<div class='res_list'><div class='info_div'><span class='stu_name'>"
+								+ info.data[i].stu_name +
+								"</span><br><span class='stu_info'>"
+								+ info.data[i].grade + "/" + info.data[i].class + "/" + info.data[i].lesson + "/" + info.data[i].activity  +
+								"</span></div><span class='mui-icon mui-icon-forward'></span></div>";
+						}
+						
+						stu_list_e.html(str);
+						
+					}else if(info.code == 100){
+						mui.toast(info.msg, { duration:'short', type:'div'});
+					}
+				},
+				error: function (){
+					mui.toast('网络异常~', { duration:'short', type:'div'});
+				}
+			});//ajax 结束
+			
+			//mui('#search').button('loading');//切换为loading状态
+			//mui('#search').button('reset');//恢复为原始状态
+		})//查询按钮 点击事件 结束
+		
+		//上拉加载 更多学生数据
+		var mui_content = $('#mui_content');
+		var data_per_pull = 0; //每次上拉加载的数据条数
+		var not_up = 1; //如果点击页面的一个通知显示详情后 将此值变为0（即：在弹窗中禁用swipeup）
+		
+		document.addEventListener("swipeup", function (event) {
+			mui.toast('上拉~',{ duration:'short', type:'div' });return;
+			if ( not_up == 0 ){ return; } //在页面弹出层里 禁用swipeup
+			
+			data_per_pull += 6;//每次加载10条 后期改为10条
+			
+			$.ajax({
+				//url: '/index/notice/index',
+				type: 'post',
+				dataType: 'json',
+				data: {start: data_per_pull},
+				success: function (info) {
+					if (info.code == 200)
+					{
+						let stu_str = '';
+						
+						let n = info.data.length;
+						
+						for (let i = 0; i < n; i++ )
+						{
+							stu_str += '';
+						}
+							
+						mui_content.append(stu_str);						
+					}else if (info.code == 100)
+					{
+						mui.toast('没有更多数据了~',{ duration:'short', type:'div' });
+					}
+				},
+				error: function () {
+					mui.toast('网络异常，请重试~',{ duration:'short', type:'div' });
+				},
+			})//ajax结束
+		});
+		//上拉加载---------------结束
+		
+		//弹出第一次
+		//$('#search').click(function () {
+		//	mui('#popover').popover('show', document.getElementById("popover"));
+		//})//弹出第一次 结束
+		
+		//弹出第二次 
+		$('#pop_again').click(function () {
+			mui('#popover2').popover('show', document.getElementById("popover2"));
+		})//弹出第二次 结束
+		
+		//关闭第二次弹窗
+		$('#close_pop2').click(function () {
+			mui('#popover2').popover('hide', document.getElementById("popover2"));//关闭第二次弹窗
+			mui('#popover').popover('show', document.getElementById("popover"));//显示第一次弹窗
+		})//关闭第二次弹窗 结束
+		
+		//学生结果列表点击事件 
+		$('#stu_list').on('click', '.res_list', function(e) {
+			//mui.toast('登陆成功',{ duration:'short', type:'div'});
+			//let y = 
+		})////学生结果列表点击事件 结束
+	</script>
+{/block}

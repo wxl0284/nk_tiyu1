@@ -26,23 +26,21 @@
 		{else /}<div style='text-align:center;color:#666'>暂无通知公告</div>
 		{/if}
 	</div>
-	<div style='height: 20vw;'></div><!--此元素用来撑起来页面内容区  避免foot遮挡内容-->                                  
+	<div style='height: 20vw;'></div><!--此元素用来撑起来页面内容区  避免foot遮挡内容-->               
 	<div id="popover" class="mui-popover mui-scroll"><!--弹出层元素 用来显示通知公告详情-->   
 		<div id='notice_detail'>
 			<div>
-				<span id='detail_t'>标题标题标题标题标题标题标题标题标题标题标题</span><br>
-				<span class='detail_info' id='detail_add'>李老师</span><span class='detail_info' id='detail_time'>2020-08-28 12:12</span>
+				<span id='detail_t'></span><br>
+				<span class='detail_info' id='detail_add'></span><span class='detail_info' id='detail_time'></span>
 			</div>
-			<div id='detail_content'>
-				点击通知 在页面中弹层中显示通知详情结束,点击通知 在页面,点击通知 在页面中弹层中显示通知详点击通知 在页面中弹层中显示通知详情结束,点击通知 在页面点击haha
-			</div>
+			<div id='detail_content'></div>
 		</div>
 	</div>
 	<style>
 	/*通知详情弹窗样式*/
 	#popover { top:150px !important; left: 0 !important; position:fixed;}
-	#notice_detail {	position: absolute;	background-color: #fff;	left: 2vw;
-		width: 96vw;	max-height:90vw; margin: 0 auto; overflow:scroll; 
+	#notice_detail { position: absolute; background-color: #fff; left: 2vw;
+		width: 96vw; max-height:90vw; margin: 0 auto; overflow:scroll; 
 		padding: 1.5vw; border-radius: 3px;}
 	.mui-popover-arrow {display:none;}
 	/*通知详情弹窗样式 结束*/
@@ -70,7 +68,7 @@
 
 			if ( not_up == 0 ){ return; } //在页面弹出层里 禁用swipeup
 			
-			data_per_pull += 2;
+			data_per_pull += 6;//每次加载6条
 			
 			$.ajax({
 				url: '/index/notice/index',

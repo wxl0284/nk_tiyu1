@@ -1,0 +1,6 @@
+* {padding: 0; margin: 0;}
+
+#head { background-color: #fdd315; padding-top: 0.7vw;}
+
+#head .mui-title { font-size: 4vw; font-weight: bold; }
+.cartoon_link_btn { background-color: #fdd315; margin: 5vw 1.5vw 0 2.5vw; width: 28vw;}

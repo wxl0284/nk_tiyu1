@@ -1,36 +1,30 @@
 {extend name="template/base" /}
 
 {block name="style"}
-	<link rel="stylesheet" type="text/css" href="/static/index/css/front.css"/>
+	<link rel="stylesheet" type="text/css" href="/static/index/css/cartoon.css"/>
 {/block}
 
 {block name="content"}
+	<header id='head' class="mui-bar mui-bar-nav">
+	    <h1 class="mui-title">标准动画</h1>
+	</header>
 	<div class="mui-content">
-		<div id='head'>
-			<div id='head_name'>体感互动教学管理系统</div>
-			<div id='info_div'>
-				<img src='/static/index/images/h.png'>
-				<div>
-					<span id='teacher'>李老师</span>
-					<br>
-					<span id='college'>体育学院</span>
-				</div>
-			</div>
-		</div><!--id="head" 结束-->
-		<div id='notice'>
-			<span>同安h随风倒随风倒沙发沙发色发射点发生风倒沙发沙发色发风倒沙发沙发色发风倒沙发沙发色发身</span>
-		</div>
-		<div id='content'>
-			<a href='/index/notice/index'><img src='/static/index/images/notice.png'></a><a href='/index/score/index'><img src='/static/index/images/score.png'></a><a href='/index/calcute/index'><img src='/static/index/images/cal.png'></a><a href='http://192.138.8.249/index/memory/index'><img src='/static/index/images/mem.png'></a>
-		</div>
+		<button type="button" class="mui-btn mui-btn-outlined cartoon_link_btn" url='/xx/xx/xx' >网球动画</button>
+		<button type="button" class="mui-btn mui-btn-outlined cartoon_link_btn" url='/xx/xx/xx' >舞蹈动画</button>
 	</div>
 {/block}
 
 {block name="script"}
 	<script type="text/javascript">		
-		//mui.toast(address, { duration:'long', type:'div' });
 		$('#home_page').attr('src', '/static/index/images/front.png');
 		$('#video_page').attr('src', '/static/index/images/video.png');
 		$('#cartoon_page').attr('src', '/static/index/images/cartoon_active.png');
+		
+		//给所有video 绑定点击后才播放的事件
+		$(document).on('click', '.cartoon_link_btn', function (e) {
+			let url = $(this).attr('url');
+			window.location.href = url;
+		})//video 点击播放结束
+		
 	</script>
 {/block}

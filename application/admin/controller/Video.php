@@ -120,15 +120,24 @@ class Video extends Controller
     }
 
     /*
-    删除视频数据
+              删除视频数据
     */
     public function del_video ()
     {
         $d = input();
+        
+		$r = Db::table('tp_video')->where('v_id', $d['v_id'])->field('video_pic, video')->find();
+		
+		if ($r)
+		{
+			//删除视频的封面图片和视频内容
+			unlink($r['video_pic']);
+			unlink($r['video']);
+		}
+		
+        $r1 = Db::table('tp_video')->where('v_id', $d['v_id'])->delete();
 
-        $r = Db::table('tp_video')->where('v_id', $d['v_id'])->delete();
-
-        if ($r)
+        if ($r1)
         {
             return json(['code'=>200, 'msg'=>'删除成功~']);
         }else{

@@ -1,28 +1,39 @@
 {extend name="template/base" /}
 
 {block name="style"}
-	<link rel="stylesheet" type="text/css" href="/static/index/css/front.css"/>
+	<link rel="stylesheet" type="text/css" href="/static/index/css/video.css"/>
 {/block}
 
 {block name="content"}
+	<header id='head' class="mui-bar mui-bar-nav">
+	    <h1 class="mui-title">标准视频</h1>
+	</header>
 	<div class="mui-content">
-		<div id='head'>
-			<div id='head_name'>体感互动教学管理系统</div>
-			<div id='info_div'>
-				<img src='/static/index/images/h.png'>
-				<div>
-					<span id='teacher'>李老师</span>
-					<br>
-					<span id='college'>体育学院</span>
-				</div>
+		<div id='lession_type' class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted"><!--横向滚动-->
+			<div class="mui-scroll">
+				{if isset($lession)}
+					{volist name='list' id='v' key='k'}
+						<a class="mui-control-item {if $k==1}mui-active{/if}">{$v}</a>
+					{/volist}
+				{else /} <span id='no_video'>暂无视频~</span>
+				{/if}
 			</div>
-		</div><!--id="head" 结束-->
-		<div id='notice'>
-			<span>同安h随风倒随风倒沙发沙发色发射点发生风倒沙发沙发色发风倒沙发沙发色发风倒沙发沙发色发身</span>
-		</div>
-		<div id='content'>
-			<a href='/index/notice/index'><img src='/static/index/images/notice.png'></a><a href='/index/score/index'><img src='/static/index/images/score.png'></a><a href='/index/calcute/index'><img src='/static/index/images/cal.png'></a><a href='http://192.138.8.249/index/memory/index'><img src='/static/index/images/mem.png'></a>
-		</div>
+		</div><!--横向滚动 结束-->
+		<div id='video_list'>
+			{if isset($videos)}
+			{volist name='videos' id='v'}
+				<div class='video'>
+					<video poster="{$v.video_pic}" src='{$v.video}'>
+					</video>
+					<span class='activity'>{$v.video_name}</span><br>
+					<span class='activity_info'>{$v.video_info}</span>
+				</div>
+			{/volist}
+			{else /} <span id='no_lession_video'>此课程暂无视频~</span>
+			{/if}
+			
+			<div style='height: 18vw;clear:both;'></div><!--此元素用来撑起来页面内容区  避免foot遮挡内容-->
+		</div>		
 	</div>
 {/block}
 
@@ -31,5 +42,59 @@
 		$('#home_page').attr('src', '/static/index/images/front.png');
 		$('#video_page').attr('src', '/static/index/images/video_active.png');
 		$('#cartoon_page').attr('src', '/static/index/images/cartoon.png');
+		
+		//给所有video 绑定点击后才播放的事件
+		$('#video_list').on('click', 'video', function (e) {
+			e.target.play();
+			
+			/*e.target.onpause = function() {
+			    //mui.toast('暂停了',{ duration:'short', type:'div' });
+			};*/
+		})//video 点击播放结束
+		
+		var video_list_e = $('#video_list');
+		
+		$('#lession_type').on('click', 'a', function (e) {
+			let lession = $(this).html();
+			let html_str = '';
+			
+			$.ajax({
+				url: '/index/video/show_lession_video',
+				type: 'post',
+				dataType: 'json',
+				data: {video_lession: lession},
+				success: function (info) {
+					if (info.code == 200)
+					{
+						for (let i=0; i<info.data.length; i++)
+						{
+							html_str += "<div class='video'><video poster='"
+								+ info.data[i].video_pic + "' src='"
+								+ info.data[i].video +
+								"'></video><span class='activity'>"
+								+ info.data[i].video_name +
+								"</span><br><span class='activity_info'>"
+								+ info.data[i].video_info +
+								"</span></div>";
+						}
+						
+						html_str += "<div style='height: 18vw;clear:both;'></div>";
+						
+						video_list_e.html( html_str  );
+
+					}else if(info.code == 100)
+					{
+						mui.toast(info.msg, { duration:'short', type:'div' });
+						
+						html_str += "<span id='no_lession_video'>此课程暂无视频~</span>";
+						video_list_e.html( html_str );
+					}
+					
+				},
+				error: function () {
+					mui.toast('网络异常~', { duration:'short', type:'div' });
+				}
+			})//ajax 结束
+		})//请求课程的视频列表结束
 	</script>
 {/block}

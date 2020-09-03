@@ -31,7 +31,7 @@ class ReceiveStudentVideo extends Controller
 
         $file = request()->file('file');
         $file_info = $file->getInfo();//原文件名：$file_info['name'] 临时文件名：$file_info['tmp_name']  文件大小：$file_info['size']
-		$file_name = $file_info['name']; //原文件名
+		/*$file_name = $file_info['name']; //原文件名
 		$file_name = $explode('_', $file_name); //解析出：学生号_姓名_课程名_动作名_成绩_时间
 		
 		$d = [];
@@ -42,7 +42,7 @@ class ReceiveStudentVideo extends Controller
 		$d['activity'] = $file_name[3]; //动作
 		$d['grade'] = $file_name[4]; //成绩
 		$d['time'] = $file_name[5]; //时间
-		$d['video'] = $file_info['name']; //视频名称
+		$d['video'] = $file_info['name']; //视频名称*/
 		
         $info = $file->move($student_video_dir, '');//移动到此目录，且使用原文件名
 
@@ -54,9 +54,9 @@ class ReceiveStudentVideo extends Controller
             //echo $info->getFilename();// 输出 42a79759f284b767dfcb2a0197904287.jpg
 			//往云端数据库插入数据
 			
-			Db::connect('mysql://root:1234@47.111.14.134:3306/nk_tiyu#utf8')//nk_tiyu是数据库名
+			/*Db::connect('mysql://root:1234@47.111.14.134:3306/nk_tiyu#utf8')//nk_tiyu是数据库名
 			->table('tp_stu_video_grade')
-			->insert($d);
+			->insert($d);*/
 			
             echo 'ok';
         }else{

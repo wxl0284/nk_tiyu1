@@ -28,7 +28,7 @@ class Notice extends Base
 			}
     	}
     
-    	$r = Db::table('tp_notice')->order('id', 'desc')->limit($d['start'], 2)->select();
+    	$r = Db::table('tp_notice')->order('id', 'desc')->limit($d['start'], 6)->select();//每次查6个
     	
     	if ($r)
     	{
