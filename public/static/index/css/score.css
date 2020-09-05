@@ -26,3 +26,35 @@
 #stu_list {margin-top: -1vw;}
 
 #stu_list .mui-icon-forward { color: #585858;}
+
+/*学生数据弹出层的样式*/
+#score_detail {background-color: #f5f5f5; }
+
+.mui-icon-closeempty { color: #000; font-weight: bold;
+	font-size: 8vw; background-color: #fdd315; border-radius: 50%;
+	position: relative; top: 2vw; left: 89vw; }/*弹出层 关闭按钮的样式*/
+	
+#score_info table { margin: 0 auto; width: 95vw; }
+
+#score_info tr { height: 9vw; }
+
+#score_info td { width: 32vw; }
+
+#score_info .info_name {font-size: 3.5vw; font-weight: bold; color:#6c6c6c;}
+
+#score_info .info_data {font-size: 4vw; font-weight: bold; color:#39383a;}
+
+#activitys table { text-align: center; width: 96vw; margin: 0 auto; background-color: #fff;}
+
+#activitys tr { border-bottom: 1px solid #f5f5f5; }
+
+#activitys td { display: table-cell; height: 11vw; line-height: 11vw;}
+
+#activitys td img { width:7vw; vertical-align: middle; }
+
+#activitys .info_title { font-size: 4vw; font-weight: bold; color:#6c6c6c; }
+
+#activitys .info_detail { font-size: 3.5vw; font-weight: bold; color:#39383a; }
+
+#stu_video {width: 100vw; position: absolute; top: 8vh; display: none;}
+/*学生数据弹出层的样式 结束*/

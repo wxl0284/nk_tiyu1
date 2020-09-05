@@ -30,7 +30,7 @@ class ReceiveStudentVideo extends Controller
         }
 
         $file = request()->file('file');
-        $file_info = $file->getInfo();//原文件名：$file_info['name'] 临时文件名：$file_info['tmp_name']  文件大小：$file_info['size']
+        //$file_info = $file->getInfo();//原文件名：$file_info['name'] 临时文件名：$file_info['tmp_name']  文件大小：$file_info['size']
 		/*$file_name = $file_info['name']; //原文件名
 		$file_name = $explode('_', $file_name); //解析出：学生号_姓名_课程名_动作名_成绩_时间
 		

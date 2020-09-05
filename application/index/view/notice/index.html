@@ -182,12 +182,12 @@
 				}
 			})
 			//notice_detail.html('显示通知详情结束,详情结束,haha')
-			mui('.mui-popover').popover('toggle', document.getElementById("popover"));
+			mui('#popover').popover('toggle');
 			not_up = 0; //在弹窗中禁用swipeup
 		})//点击通知 在页面中弹层中显示通知详情结束
 		
 		$(document).on('click', '.mui-backdrop', function(){
-			not_up = 1; //在弹窗中启用swipeup
+			not_up = 1; //点击遮罩后，启用swipeup
 		})
 	</script>
 {/block}

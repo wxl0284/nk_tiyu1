@@ -86,7 +86,7 @@ class Score extends Base
 	}//get_data 结束
 	
 	/*
-	get_student_data() 根据select下拉框查询其option值
+	get_student_data() 根据select下拉框查询其option值,每个学生的同一个动作仅查一条
 	*/
 	
 	public function get_student_data ()
@@ -100,9 +100,9 @@ class Score extends Base
 			$where['grade'] = $d['grade'];
 		}
 		
-		if ($d['class'] !== '0')
+		if ($d['clas'] !== '0')
 		{
-			$where['class'] = $d['class'];
+			$where['class'] = $d['clas'];
 		}
 		
 		if ($d['lesson'] !== '0')
@@ -121,14 +121,65 @@ class Score extends Base
     		$d['start'] = 0; //点击查询按钮 ，还没有上划屏幕时，从第一条开始查
     	}
 		
+		//对stu_num和id两个字段按降序排列
 		$r = Db::table('alldata')->where($where)
-		   ->order('id', 'desc')->limit($d['start'], 10)->field('id,stu_name,grade,class,lesson,activity')->select();//每次上划屏幕加载10条
-		   
+		   ->order(['stu_num', 'id' =>'desc'])->limit($d['start'], 10)->field('id,stu_num,stu_name,grade,class,lesson,activity')->select();//每次上划屏幕加载10条
+	
 		if ($r)
 		{
+			//根据学号或登录号--课程--动作将同一学生某课程的同一动作多条记录只保留一条在页面显示
+			$t = '';
+			
+			foreach($r as $k => $v)
+			{
+				$t1 = $v['stu_num'] . $v['lesson'] . $v['activity'];//学号课程动作
+				
+				if ($t1 === $t)
+				{
+					unset($r[$k]);
+				}
+				
+				$t = $v['stu_num'] . $v['lesson'] . $v['activity'];//学号课程动作			
+			}
+			
+			$r = array_column($r,null);//将$r的索引重新按0 1 2进行编排， 否则其索引为 0 2 5前端js无法循环输出
+			
 			return json(['code' => 200, 'data' => $r]);
 		}else{
 			return json(['code' => 100, 'msg' => '暂未查到数据，稍后再试~']);
+		}
+	}
+	
+	/*
+	 get_10_item(): 获取页面中一个学生的同一个动作的最新10条记录
+	*/
+	
+	public function get_10_item ()
+	{
+		$d = input('post.param'); //"889|01班|正手击球"
+		
+		$d = explode('|', $d);
+		
+		$d = ['stu_num' => $d[0], 'lesson' => $d[1], 'activity' => $d[2]];//组装查询的条件
+		
+		$r = Db::table('alldata')->where($d)->order('id', 'desc')->limit(10)->field('id,stu_name,grade,class,lesson,activity,time,score,video')->select();
+		
+		if ($r)
+		{
+			//处理时间 20200910121212, 处理为20-09-18 11:12	
+			foreach($r as $k => $v)
+			{
+				$temp = $v['time'];
+				$temp = substr($temp, 2, 10);//$temp:2009021112
+				$temp = str_split($temp, 2);//把$temp按2个字符等分
+				$temp = $temp[0] . '-' . $temp[1] . '-' . $temp[2] . ' ' . $temp[3] . ':' . $temp[4];
+				
+				$r[$k]['time'] = $temp;
+			}
+			
+			return json(['code' => 200, 'data' => $r, 'student_video_ip' => config('student_video_ip')]);
+		}else{
+			return json(['code' => 100, 'msg' => '暂未查到数据~']);
 		}
 	}
 }

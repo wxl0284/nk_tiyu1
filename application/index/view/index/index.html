@@ -29,12 +29,14 @@
 {block name="script"}
 	<script type="text/javascript">
 		var ws = null;
+		var stu_grade = "{$stu_grade}"; //年级
+		var stu_class = "{$stu_class}"; //班级
 		var stu_num = "{$stu_num}"; //学生号
 		var stu_name = "{$stu_name}"; //学生姓名
 		var type = "{$type}"; //类型（1 表示学生）
 		var address = "{$ip}";//训练终端的ip
 		
-		var stu_data = '' + address + '_' + stu_num + '_' + stu_name + '_' + type; //组装要发送的数据
+		var stu_data = '' + address + '_' + stu_num + '_' + stu_name + '_' + type + '_' + stu_grade + '_' + stu_class; //组装要发送的数据
 	
 		window.onload = connect(); //页面加载完成执行connect()
 		

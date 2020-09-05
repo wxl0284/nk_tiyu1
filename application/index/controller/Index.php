@@ -19,11 +19,13 @@ class Index extends Controller
     	if ( $this->request->isMobile() )
     	{
     		$ip = input('address');//训练终端的ip
+    		$stu_grade = '2019';//年级
+    		$stu_class = '天文1班';//班级
     		$stu_num = '777';//学生号
     		$stu_name = 'li'; //学生姓名		
     		$type = 2; //1表示学生 2 表示教师
     		
-    		return view()->assign(['ip' => $ip, 'stu_num' => $stu_num, 'stu_name' => $stu_name, 'type' => $type]);
+    		return view()->assign(['ip' => $ip, 'stu_grade' => $stu_grade, 'stu_class' => $stu_class, 'stu_num' => $stu_num, 'stu_name' => $stu_name, 'type' => $type]);
     	}else{
     		$this->redirect('admin/pub/login');//登录进后台
     	}
