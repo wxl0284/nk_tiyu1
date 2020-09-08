@@ -1,0 +1,29 @@
+* {padding: 0; margin: 0;}
+
+#select_div { padding: 3vw 3vw 2vw 3vw; }
+
+#select_div select { border: 1px solid #fdd315 !important; color:#888; padding:5px 15px; margin-bottom:5px;
+	background-image: url('../images/sel_down.png'); background-repeat: no-repeat;
+	font-size: 3.4vw; margin-top: 0;}
+
+#select_div .select1 { width: 29.7vw; margin-left: 0.35vw; 
+	background-position: 96% 54%; background-size: 3vw; }
+	
+#search	{ height: 33px; background-color: #fdd315; width: 29.7vw; border: 1px solid #fdd315; margin-left: 0.2vw; }
+	
+.res_list { display: flex; align-items: center; padding: 2vw 3vw 2vw 4vw;
+	border-bottom: 1px solid #ebebeb; background-color: #fff; }
+
+.res_list .info_div { width: 90vw; }
+
+.stu_name { font-size: 4vw; font-weight: bold; color: #39383a; }
+
+.stu_info { font-size: 3.3vw; font-weight: bold; color: #585858; }
+
+#stu_list {margin-top: -1vw;}
+
+#stu_list .mui-icon-forward { color: #585858;}
+
+/*学生数据弹出层的样式*/
+
+/*学生成绩数据弹出层的样式 结束*/

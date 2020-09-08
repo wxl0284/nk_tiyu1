@@ -41,7 +41,7 @@
 	max-width: 62vw;
 	}
 	
-#content {margin: 0 auto; 
+#content {margin: 0 auto; /*padding: 2vh 0;*/
 	width: 98%; height:14.13vh; background-color: #fff; display: flex; align-items: center;}
 
 #content img {width: 57%; margin: 0 21.8%; }

@@ -57,4 +57,16 @@
 #activitys .info_detail { font-size: 3.5vw; font-weight: bold; color:#39383a; }
 
 #stu_video {width: 100vw; position: absolute; top: 8vh; display: none;}
-/*学生数据弹出层的样式 结束*/
+
+#add_advise { display: none; width: 100%; height: 300%;
+ 	background-image: url('../images/advise_bg.png'); position: absolute; top: 0;
+	}
+
+#add_advise table { width: 76vw; height: 57vw; text-align: center; background-color: #fff; 
+	margin: 18vw auto 0; border-radius: 6px;}
+	
+#add_advise textarea { padding: 0px 10px; height: 100%; margin-bottom: 0; border-radius: 0; font-size: 3.3vw; border:0; border-top: 1px solid #e7e7e7; }
+
+#add_advise .td_btn { font-size: 4vw; color:#ffd515; font-weight:bold; padding-top: 4px;}
+#add_advise .td_title {font-size: 4vw; font-weight: bold; color: #39383a;}
+/*学生成绩数据弹出层的样式 结束*/

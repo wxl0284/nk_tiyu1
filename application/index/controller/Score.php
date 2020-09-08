@@ -12,15 +12,41 @@ class Score extends Base
 	
 	public function index ()
 	{
-		//看是否有成绩数据
-		$r = Db::table('alldata')->order('id', 'asc')->find();
-		
+		$r = Db::table('alldata')->order('id', 'desc')->where('stu_num', 889)->group('lesson')->column('lesson');
+			
 		if ($r)
 		{
-			return view()->assign(['have_score' => 1]);
+			return view('stu_score')->assign(['have_score' => 1]);
 		}else{
-			return view();
+			return view('stu_score');
 		}
+		
+		//获取用户类型   1-学生   2-教工
+		/*if ( session('type') == 1 )
+		{
+			$stu_num = session('student_number');//学号
+			//看是否有成绩数据
+			$r = Db::table('alldata')->order('id', 'desc')->where('stu_num', $stu_num)->group('lesson')->column('lesson');
+			
+			if ($r)
+			{
+				return view('stu_score')->assign(['have_score' => 1]);
+			}else{
+				return view('stu_score');
+			}
+			
+		}else if ( session('type') == 2 )
+		{
+			//看是否有成绩数据
+			$r = Db::table('alldata')->order('id', 'asc')->find();
+			
+			if ($r)
+			{
+				return view()->assign(['have_score' => 1]);
+			}else{
+				return view();
+			}
+		}*/
 		
 	}//index 结束
 	
@@ -162,7 +188,7 @@ class Score extends Base
 		
 		$d = ['stu_num' => $d[0], 'lesson' => $d[1], 'activity' => $d[2]];//组装查询的条件
 		
-		$r = Db::table('alldata')->where($d)->order('id', 'desc')->limit(10)->field('id,stu_name,grade,class,lesson,activity,time,score,video')->select();
+		$r = Db::table('alldata')->where($d)->order('id', 'desc')->limit(10)->field('id,stu_name,grade,class,lesson,activity,time,score,video,advice')->select();
 		
 		if ($r)
 		{
@@ -180,6 +206,24 @@ class Score extends Base
 			return json(['code' => 200, 'data' => $r, 'student_video_ip' => config('student_video_ip')]);
 		}else{
 			return json(['code' => 100, 'msg' => '暂未查到数据~']);
+		}
+	}
+	
+	/*
+	 add_advice() 添加指导意见给某条训练记录
+	*/
+	public function add_advice ()
+	{
+		$d = input();
+		//halt($d);
+		
+		$r = Db::table('alldata')->where('id', $d['id'])->update(['advice' => $d['advice']]);
+		
+		if ($r)
+		{
+			return json(['code' => 200, 'msg' => '提交成功']);
+		}else{
+			return json(['code' => 100, 'msg' => '提交失败']);
 		}
 	}
 }

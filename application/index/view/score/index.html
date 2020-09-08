@@ -46,21 +46,22 @@
 			<div id='activitys'><!--每个动作的10个训练记录数据-->
 				<table></table>
 			</div><!--每个动作的10个训练记录数据  结束-->
-			<video id='stu_video'></video>
+			<video id='stu_video'></video><!--播放学生训练视频 点击列表播放按钮后显示-->
+			<!--提交指导建议的弹窗 -->
+			<div id='add_advise'>
+				<table>
+					<tr><td colspan="2" class='td_title'>指导建议</td></tr>
+					<tr>
+						<td colspan="2" style='height:35vw;border-bottom:1px solid #e7e7e7;'><textarea id='advise_txt' placeholder='请点击输入指导建议'></textarea></td>
+					</tr>
+					<tr class='td_btn'>
+						<td style='border-right:1px solid #e7e7e7;' id='cancel'>取消</td>
+						<td id='sbmt'>提交</td>
+					</tr>
+				</table>
+			</div>
+			<!--提交指导建议的弹窗 结束-->
 		</div>		
-	</div>
-	<div id="popover2" class="mui-popover mui-scroll"><!--弹出层2 显示某学生的某个动作的某一次练习的记录信息-->
-		<div id='test'>
-			<span>第二次弹了</span>
-			<br>
-			<span id='close_pop2'>关闭 第二次的弹窗</span>
-		</div>
-	</div>
-	<div id="popover3" class="mui-popover">
-		<div>
-			<!--<span id='close_video_pop' class="mui-icon mui-icon-closeempty"></span>-->
-			<!--<video id='stu_video'></video>-->
-		</div>
 	</div>
 	<!--弹出层  结束-->
 	<style>
@@ -69,7 +70,6 @@
 	#score_detail { height:85vh; overflow:scroll;
 		padding: 0 0 1.5vw 0; /*margin: 0 auto; left: 2vw; position: absolute;*/}
 	.mui-popover-arrow { display:none; }
-	#popover3 { top: 45px !important;left: 0 !important; position: fixed; width: 100vw; border-radius: 0;}
 	/*弹出层1 样式 结束*/
 	</style>
 {/block}
@@ -308,28 +308,35 @@
 						
 						for(let i=0; i<num; i++)
 						{
+							let advice = '';
+							
+							if (info.data[i].advice)
+							{
+								advice = info.data[i].advice;
+							}
+							
 							str += "<tr class='info_detail'><td>"
 								+ (i+1) + "</td><td>"
 								+ info.data[i].time + "</td><td>"
-								+ info.data[i].score + "</td><td><img video_url='http://"
+								+ info.data[i].score + "</td><td><img video_url='"
 								+ info.student_video_ip + info.data[i].video +
-								"' class='play' style='margin-right: 6vw' src='/static/index/images/play.png'><img class='advise' src='/static/index/images/advise.png'></td></tr>";
+								"' class='play' style='margin-right: 6vw' src='/static/index/images/play.png'><img class='advise' src='/static/index/images/advise.png' aid='"
+								+ info.data[i].id + "' advice='"
+								+ advice + "'></td></tr>";
 						}
 						
 						activity_list.html(str);
-					
-						mui('#popover').popover('show');
+						mui('#popover').popover('show');//弹出某学生10个训练记录
 					}else if (info.code == 100)
 					{
-						mui.toast(info.msg, { duration:'short', type:'div' });
+						mui.toast(info.msg, {duration:'short', type:'div' });
 					}
 				},
 				error:function (info) {
-					mui.toast('网络异常，请重试~',{ duration:'short', type:'div' });
+					mui.toast('网络异常，请重试~',{duration:'short', type:'div' });
 				}
 			})
 			
-			//mui.toast(p, { duration:'short', type:'div' });
 			not_up = 0;//在弹窗中 禁用swipeup
 		})
 		//点击每条记录后弹出此记录的详情 结束
@@ -338,15 +345,8 @@
 		//关闭第一次弹窗
 		$('#close_pop1').click(function () {
 			mui('#popover').popover('hide');
-			//stu_video_e.css('display', 'none');
 			not_up = 1; //启用页面的上拉加载
 		})
-		
-		//关闭视频弹窗
-//		$('#close_video_pop').click(function () {
-//			mui('#popover3').popover('hide');
-//			//mui('#popover').popover('hide', document.getElementById("popover"));
-//		})
 		
 		//学生数据列表的播放、建议2个图标的点击事件
 		
@@ -355,10 +355,61 @@
 			let video_url = $(this).attr('video_url');
 			stu_video_e.attr('src', video_url).css('display', 'block');
 			stu_video_e[0].play();
-			
 		})
 		
-		$('#activitys').on('click', '.advise', function() {
+		//显示及提交指导建议的事件
+		var add_advis_e = $('#add_advise');//指导建议的弹窗
+		var advis_txt = $('#advise_txt');//指导建议的输入框
+		var sbmt = $('#sbmt');//指导建议  提交按钮
+		var aid = ''; //要添加指导建议的的那条记录的id
+		var advice_str = ''; //一条记录的指导建议
+		var activitys_e = $('#activitys'); //多条训练记录的父元素
+		
+		activitys_e.on('click', '.advise', function() {
+			add_advis_e.css('display', 'block');
+			aid = $(this).attr('aid');			
+			advice_str = $(this).attr('advice');	
+			advis_txt.val(advice_str);			
+		})
+		
+		//点击指导建议的取消按钮 
+		$('#cancel').click('click', function () {
+			add_advis_e.css('display', 'none');
+			advis_txt.val('');
+		})
+		
+		//点击指导建议的提交按钮 
+		sbmt.click('click', function () {
+			let v = $.trim(advis_txt.val());
+			
+			if (v.length ==0)
+			{
+				mui.toast('请输入指导建议~',{duration:'short', type:'div' }); return;
+			}
+			
+			$.ajax({
+				url: '/index/score/add_advice',
+				type: 'post',
+				data: {advice: v, id:aid},
+				dataType: 'json',
+				success: function (info) {
+					if (info.code == 200)
+					{
+						mui.toast('提交成功~', {duration:'short', type:'div' });
+						activitys_e.find('img[aid="'+ aid +'"]').attr('advice', v);//把提交的建议赋值给此条记录
+						add_advis_e.css('display', 'none');
+						advis_txt.val('');
+					}else if (info.code == 100)
+					{
+						mui.toast('提交失败, 请再次提交~', {duration:'short', type:'div' });
+					}
+					
+				},
+				error: function () {
+					mui.toast('网络异常，请重新提交~', {duration:'short', type:'div' });
+				}
+			})
+			
 		})
 		
 		//video标签的事件监听
@@ -372,28 +423,6 @@
 		
 		stu_video_e[0].addEventListener ('stalled', function () {
 			stu_video_e.css('display', 'none');//尝试获取媒体数据失败
-		});
-	
-		//弹出第一次
-		//$('#search').click(function () {
-		//	mui('#popover').popover('show', document.getElementById("popover"));
-		//})//弹出第一次 结束
-		
-		//弹出第二次 
-		/*$('#pop_again').click(function () {
-			mui('#popover2').popover('show', document.getElementById("popover2"));
-		})//弹出第二次 结束
-		
-		//关闭第二次弹窗
-		$('#close_pop2').click(function () {
-			mui('#popover2').popover('hide', document.getElementById("popover2"));//关闭第二次弹窗
-			mui('#popover').popover('show', document.getElementById("popover"));//显示第一次弹窗
-		})//关闭第二次弹窗 结束
-		
-		//学生结果列表点击事件 
-		$('#stu_list').on('click', '.res_list', function(e) {
-			//mui.toast('登陆成功',{ duration:'short', type:'div'});
-			//let y = 
-		})////学生结果列表点击事件 结束*/
+		});		
 	</script>
 {/block}
