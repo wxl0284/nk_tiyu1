@@ -45,9 +45,11 @@
 	.mui-popover-arrow {display:none;}
 	/*通知详情弹窗样式 结束*/
 	/*学生身份的 通知列表样式*/
-	/*如果 是学生身份
-	.notice_list_a { width: 90vw; } .notice_edit, .notice_del, #add_notice { display:none;} */
-	/*学生身份的 通知列表样式 结束*/
+	/*如果 是学生身份*/
+	{if isset($type) && $type == 'stu'}
+	.notice_list_a { width: 90vw; } .notice_edit, .notice_del, #add_notice, #foot { display:none;}
+	{/if}
+	/*如果 是学生身份结束*/
 	</style>
 	<!--弹出层元素 结束-->                                  
 {/block}

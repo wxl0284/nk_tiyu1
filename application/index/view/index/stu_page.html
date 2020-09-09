@@ -1,7 +1,7 @@
 {extend name="template/base" /}
 
 {block name="style"}
-	<link rel="stylesheet" type="text/css" href="/static/index/css/front.css"/>
+	<link rel="stylesheet" type="text/css" href="/static/index/css/stu_page.css"/>
 {/block}
 
 {block name="content"}
@@ -11,21 +11,38 @@
 			<div id='info_div'>
 				<img src='/static/index/images/h.png'>
 				<div>
-					<span id='teacher'>李老师</span>
+					<span id='teacher'>张三</span>
 					<br>
 					<span id='college'>体育学院</span>
 				</div>
 			</div>
 		</div><!--id="head" 结束-->
 		<div id='notice'>
-			<span>同安h随风倒随风倒沙发沙发色发射点发生风倒沙发沙发色发风倒沙发沙发色发风倒沙发沙发色发身</span>
+			<span id='show_notice'>同安h随风倒随风倒沙发沙发色发射点发生风倒沙发沙发色发风倒沙发沙发色发风倒沙发沙发色发身</span>
 		</div>
 		<div id='content'>
-			<a href='/index/notice/index'><img src='/static/index/images/notice.png'></a><a href='/index/score/index'><img src='/static/index/images/score.png'></a><!--<a href='/index/calcute/index'><img src='/static/index/images/cal.png'></a><a href='http://192.138.8.249/index/memory/index'><img src='/static/index/images/mem.png'></a>-->
-		</div>
+			<div id='lession_type' class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+				<div class="mui-scroll">
+					{if isset($lession)}
+					{volist name='list' id='v' key='k'}
+						<a class="mui-control-item {if $k==1}mui-active{/if}">{$v}</a>
+					{/volist}
+					{else /} <span id='no_video'>暂无课程信息~</span>
+					{/if}
+				</div>
+			</div><!--横向滚动 结束-->
+
+			<div id='video_list'>
+				{if isset($videos)}
+				{volist name='videos' id='v'}
+					<div class='video'><span class='activity'>{$v.video_name}</span></div>
+				{/volist}
+				{/if}
+			</div><!--id='video_list' 结束 -->
+		</div><!--id='content' 结束-->
 	</div>
 {/block}
-
+{block name="foot"}{/block}
 {block name="script"}
 	<script type="text/javascript">
 		var ws = null;
@@ -64,9 +81,11 @@
 	            console.log('连接已关闭');
 	        };
 		}
-		
-		$('#home_page').attr('src', '/static/index/images/front_active.png');
-		$('#video_page').attr('src', '/static/index/images/video.png');
-		$('#cartoon_page').attr('src', '/static/index/images/cartoon.png');
+
+		//点击通知的 显示学生的通知页面
+		$('#show_notice').click(function () {
+			mui.toast('aaaa', { duration:'short', type:'div' }) ;
+			window.location.href = '/index/notice/index?type=stu';
+		})
 	</script>
 {/block}

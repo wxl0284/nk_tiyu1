@@ -41,9 +41,18 @@
 	max-width: 62vw;
 	}
 	
-#content {margin: 0 auto; 
-	width: 98%; height:14.13vh; background-color: #fff; display: flex; align-items: center;}
+#content {margin: 0 auto; 	 width: 98%;  background-color: #fff;
+	/*height:14.13vh; display: flex; align-items: center;*/
+} 
 
-#content a { width: 28%; text-align: center; }
+#lession_type { padding-left:10px;}
 
-#content img { width: 18vw; margin: 0 21.8%; }
+#lession_type .mui-control-item { color: #8d8d8d; font-size: 3.8vw; font-weight: bold; padding: 0 10px;}
+
+#lession_type .mui-active { color: #39383a; border-bottom: 0; font-size: 3.67vw; font-weight: bold;}
+
+#video_list .video { display: inline-block;	width: 16vw; border: 1px solid green;
+	margin: 1vw 0.2vw 1.5vw 2vw; height: 16vw;
+}
+
+#video_list .activity { position: absolute; display: block; width: 16vw; }

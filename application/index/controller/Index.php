@@ -18,14 +18,84 @@ class Index extends Controller
     {
     	if ( $this->request->isMobile() )
     	{
-    		$ip = input('address');//训练终端的ip
+    		//$ip = input('address');//扫码获得的 训练终端的ip
+    		$ip = '192.168.8.2';//扫码获得的 训练终端的ip
     		$stu_grade = '2019';//年级
     		$stu_class = '天文1班';//班级
     		$stu_num = '888';//学生号
     		$stu_name = 'li'; //学生姓名		
     		$type = 1; //1表示学生 2 表示教师
+			
+			if ($type == 1)
+			{
+				//查询tp_video表里的每门课程包括的所有动作
+				$r = Db::table('tp_video')->group('video_lession')->column('video_lession');//所有的课程
+
+				if ($r)
+				{
+					//然后查video_lession字段==$r[0]的所有视频  例如网球
+					$video = Db::table('tp_video')->where('video_lession', $r[0])->field('video_name,video_pic,video')->order('v_id', 'asc')->select();
+					
+					if ($video)
+					{
+						//return view()->assign(['list' => $r, 'videos' => $video, 'lession' => 1]);
+						return view('stu_page')->assign([
+							'ip' => $ip,
+							'stu_grade' => $stu_grade,
+							'stu_class' => $stu_class,
+							'stu_num' => $stu_num,
+							'stu_name' => $stu_name,
+							'type' => $type,
+							'list' => $r,
+							'videos' => $video,
+							'lession' => 1
+							]);
+					}else
+					{
+						//return view()->assign(['list' => $r, 'lession' => 1]);
+						return view('stu_page')->assign([
+							'ip' => $ip,
+							'stu_grade' => $stu_grade,
+							'stu_class' => $stu_class,
+							'stu_num' => $stu_num,
+							'stu_name' => $stu_name,
+							'type' => $type,
+							'list' => $r,
+							'lession' => 1
+							]);
+					}
+					
+					
+				}else{
+					//return view();
+					return view('stu_page')->assign([
+						'ip' => $ip,
+						'stu_grade' => $stu_grade,
+						'stu_class' => $stu_class,
+						'stu_num' => $stu_num,
+						'stu_name' => $stu_name,
+						'type' => $type]);
+				}
+
+				/*return view('stu_page')->assign([
+					'ip' => $ip,
+					'stu_grade' => $stu_grade,
+					'stu_class' => $stu_class,
+					'stu_num' => $stu_num,
+					'stu_name' => $stu_name,
+					'type' => $type]);*/
+
+			}else if($type == 2)
+			{
+				return view()->assign([
+					'ip' => $ip,
+					'stu_grade' => $stu_grade,
+					'stu_class' => $stu_class,
+					'stu_num' => $stu_num,
+					'stu_name' => $stu_name,
+					'type' => $type]);
+			}
     		
-    		return view()->assign(['ip' => $ip, 'stu_grade' => $stu_grade, 'stu_class' => $stu_class, 'stu_num' => $stu_num, 'stu_name' => $stu_name, 'type' => $type]);
     	}else{
     		$this->redirect('admin/pub/login');//登录进后台
     	}

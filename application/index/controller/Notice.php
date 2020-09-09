@@ -9,7 +9,8 @@ class Notice extends Base
     //通知公告首页
     public function index()
     {   
-    	$d = input();
+		$d = input();
+		
     	$isAjax = $this->request->isAjax();
     	
     	if ( !isset($d['start']) )
@@ -41,7 +42,14 @@ class Notice extends Base
     		{
     			return json(['code' => 200, 'data' => $r]);
     		}else{
-    			return view()->assign(['list' => $r, 'notice' => 1]);
+				if ( isset($d['type']) )
+				{//是学生首页发起的请求
+					$type = 'stu';
+				}else{
+					$type = 'teacher';
+				}
+
+    			return view()->assign(['list' => $r, 'notice' => 1, 'type' => $type]);
     		}
     		
     	}else{

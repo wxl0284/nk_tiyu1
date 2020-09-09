@@ -12,14 +12,14 @@ class Score extends Base
 	
 	public function index ()
 	{
-		$r = Db::table('alldata')->order('id', 'desc')->where('stu_num', 889)->group('lesson')->column('lesson');
+		/*$r = Db::table('alldata')->order('id', 'desc')->where('stu_num', 889)->group('lesson')->column('lesson');
 			
 		if ($r)
 		{
 			return view('stu_score')->assign(['have_score' => 1]);
 		}else{
 			return view('stu_score');
-		}
+		}*/
 		
 		//获取用户类型   1-学生   2-教工
 		/*if ( session('type') == 1 )
@@ -47,6 +47,16 @@ class Score extends Base
 				return view();
 			}
 		}*/
+
+		//看是否有成绩数据
+		$r = Db::table('alldata')->order('id', 'asc')->find();
+			
+		if ($r)
+		{
+			return view()->assign(['have_score' => 1]);
+		}else{
+			return view();
+		}
 		
 	}//index 结束
 	
@@ -188,20 +198,18 @@ class Score extends Base
 		
 		$d = ['stu_num' => $d[0], 'lesson' => $d[1], 'activity' => $d[2]];//组装查询的条件
 		
-		$r = Db::table('alldata')->where($d)->order('id', 'desc')->limit(10)->field('id,stu_name,grade,class,lesson,activity,time,score,video,advice')->select();
-		
+		$r = Db::table('alldata')->where($d)->order('id', 'desc')->field('id,stu_name,grade,class,lesson,activity,time,score,video,advice')->find();
+
 		if ($r)
 		{
 			//处理时间 20200910121212, 处理为20-09-18 11:12	
-			foreach($r as $k => $v)
-			{
-				$temp = $v['time'];
-				$temp = substr($temp, 2, 10);//$temp:2009021112
-				$temp = str_split($temp, 2);//把$temp按2个字符等分
-				$temp = $temp[0] . '-' . $temp[1] . '-' . $temp[2] . ' ' . $temp[3] . ':' . $temp[4];
-				
-				$r[$k]['time'] = $temp;
-			}
+	
+			$temp = $r['time'];
+			$temp = substr($temp, 2, 10);//$temp:2009021112
+			$temp = str_split($temp, 2);//把$temp按2个字符等分
+			$temp = $temp[0] . '-' . $temp[1] . '-' . $temp[2] . ' ' . $temp[3] . ':' . $temp[4];
+			
+			$r['time'] = $temp;
 			
 			return json(['code' => 200, 'data' => $r, 'student_video_ip' => config('student_video_ip')]);
 		}else{

@@ -15,7 +15,7 @@ class Video extends Base
 		if ($r)
 		{
 			//然后查video_lession字段==$r[0]的所有视频  例如网球
-			$video = Db::table('tp_video')->where('video_lession', $r[0])->select();
+			$video = Db::table('tp_video')->where('video_lession', $r[0])->order('v_id', 'asc')->select();
 			
 			if ($video)
 			{
@@ -38,7 +38,7 @@ class Video extends Base
 		$d = input();
 		
 		
-		$r = Db::table('tp_video')->where('video_lession', $d['video_lession'])->select();
+		$r = Db::table('tp_video')->where('video_lession', $d['video_lession'])->order('v_id', 'asc')->select();
 
 		if ($r)
 		{

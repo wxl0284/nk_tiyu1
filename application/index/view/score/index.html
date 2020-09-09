@@ -43,7 +43,7 @@
 				<span id='close_pop1' class="mui-icon mui-icon-closeempty"></span>
 				<table></table>
 			</div>
-			<div id='activitys'><!--每个动作的10个训练记录数据-->
+			<div id='activitys'><!--每个动作的1个训练记录数据-->
 				<table></table>
 			</div><!--每个动作的10个训练记录数据  结束-->
 			<video id='stu_video'></video><!--播放学生训练视频 点击列表播放按钮后显示-->
@@ -226,7 +226,7 @@
 			let lesson = localStorage.getItem('lesson');
 			let activity = localStorage.getItem('activity');
 			
-			data_per_pull += 10;//每次加载10条 后期改为10条
+			data_per_pull += 10;//每次加载10条
 			
 			$.ajax({
 				url: '/index/score/get_student_data',
@@ -272,11 +272,11 @@
 		//上拉加载---------------结束
 	
 		//点击每条记录后弹出此记录最新10条
-		var activity_list = $('#activitys table');//往此元素里append学生的最新10条训练记录
+		var activity_list = $('#activitys table');//往此元素里append学生的最新1条训练记录
 		
 		stu_list_e.on('click', '.res_list', function (e) {
 			let p = $(this).attr('param');//此条数据对应的学号 课程 动作
-			//ajax 加载此条记录所属学生相同动作的最新10条记录
+			//ajax 加载此条记录所属学生相同动作的最新1条记录
 			$.ajax({
 				url: '/index/score/get_10_item',
 				type: 'post',
@@ -285,48 +285,45 @@
 				success:function (info) {
 					if (info.code == 200)
 					{
+						//console.log(info.data);return;
 						//先显示弹出层 头部的姓名 年级 班级 课程 动作
 						let stu_str = '';
 						
 						stu_str += "<tr><td><span class='info_name'>姓名:</span><span class='info_data'>"
-								+ info.data[0].stu_name  + 
+								+ info.data.stu_name  + 
 								"</span></td><td><span class='info_name'>年级:</span><span class='info_data'>"
-								+ info.data[0].grade +
+								+ info.data.grade +
 								"</span></td><td><span class='info_name'>班级:</span><span class='info_data'>"
-								+ info.data[0].class +
+								+ info.data.class +
 								"</span></td></tr><tr><td><span class='info_name'>课程:</span><span class='info_data'>"
-								+ info.data[0].lesson +
+								+ info.data.lesson +
 								"</span></td><td colspan='2' class='info_name'><span>动作:</span><span class='info_data'>"
-								+ info.data[0].activity + "</span></td></tr>";
+								+ info.data.activity + "</span></td></tr>";
 								
 						$('#score_info table').html(stu_str);
-						//再显示最新10条训练记录
+						//再显示最新1条训练记录
 						let str = '';
-						let num = info.data.length;
 						
 						str += "<tr class='info_title'><td>序号</td><td>时间</td><td>成绩</td><td></td>	</tr>";//10个动作的表格的表头
+
+						let advice = '';
 						
-						for(let i=0; i<num; i++)
+						if (info.data.advice)
 						{
-							let advice = '';
-							
-							if (info.data[i].advice)
-							{
-								advice = info.data[i].advice;
-							}
-							
-							str += "<tr class='info_detail'><td>"
-								+ (i+1) + "</td><td>"
-								+ info.data[i].time + "</td><td>"
-								+ info.data[i].score + "</td><td><img video_url='"
-								+ info.student_video_ip + info.data[i].video +
-								"' class='play' style='margin-right: 6vw' src='/static/index/images/play.png'><img class='advise' src='/static/index/images/advise.png' aid='"
-								+ info.data[i].id + "' advice='"
-								+ advice + "'></td></tr>";
+							advice = info.data.advice;
 						}
 						
+						str += "<tr class='info_detail'><td>"
+							+ 1 + "</td><td>"
+							+ info.data.time + "</td><td>"
+							+ info.data.score + "</td><td><img video_url='"
+							+ info.student_video_ip + info.data.video +
+							"' class='play' style='margin-right: 6vw' src='/static/index/images/play.png'><img class='advise' src='/static/index/images/advise.png' aid='"
+							+ info.data.id + "' advice='"
+							+ advice + "'></td></tr>";
+						
 						activity_list.html(str);
-						mui('#popover').popover('show');//弹出某学生10个训练记录
+						mui('#popover').popover('show');//弹出某学生1个最新的训练记录
 					}else if (info.code == 100)
 					{
 						mui.toast(info.msg, {duration:'short', type:'div' });
