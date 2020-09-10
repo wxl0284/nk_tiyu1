@@ -41,18 +41,30 @@
 	max-width: 62vw;
 	}
 	
-#content {margin: 0 auto; 	 width: 98%;  background-color: #fff;
+#content {margin: 0 auto; 	 width: 98%;  background-color: #fff; border-radius: 4px;
 	/*height:14.13vh; display: flex; align-items: center;*/
 } 
 
-#lession_type { padding-left:10px;}
+/* #lession_type { padding-left:10px; } */
 
-#lession_type .mui-control-item { color: #8d8d8d; font-size: 3.8vw; font-weight: bold; padding: 0 10px;}
+#lession_type .mui-control-item { color: #8d8d8d; font-size: 4vw; font-weight: bold; padding: 0 10px;}
 
-#lession_type .mui-active { color: #39383a; border-bottom: 0; font-size: 3.67vw; font-weight: bold;}
+#lession_type .mui-active { color: #39383a; border-bottom: 0; font-size: 4vw; font-weight: bold;}
 
-#video_list .video { display: inline-block;	width: 16vw; border: 1px solid green;
-	margin: 1vw 0.2vw 1.5vw 2vw; height: 16vw;
-}
+#video_list { display: flex; flex-wrap: wrap; }
 
-#video_list .activity { position: absolute; display: block; width: 16vw; }
+#video_list .video { display: flex;	width: 16vw;  margin: 3vw 01.3vw 1.5vw 2vw; height: 16vw;
+	background-size:16vw; align-items: center; justify-content: center; }
+
+#video_list .activity { text-align: center; width: 14vw; font-size: 3.3vw;font-weight: bold;}
+
+.video_normal { background-image: url('../images/activity.png'); }
+
+.video_active { background-image: url('../images/activity_click.png'); }
+
+#three_part { display: none; }
+
+#online_src img { width: 29.8vw; margin: 0 0.6vw 0 2vw; display: inline-block; }
+
+/*老师建议 弹窗样式*/
+/*老师建议 弹窗样式 结束*/

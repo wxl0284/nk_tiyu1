@@ -31,16 +31,34 @@
 					{/if}
 				</div>
 			</div><!--横向滚动 结束-->
-
+			<div id='online_src'>
+				<a href='http://tyb.nankai.edu.cn/2020/0110/c19344a263379/page.htm'><img src="/static/index/images/online_video.png"></a><a><img src="/static/index/images/online_cartoon.png"></a>
+			</div>
 			<div id='video_list'>
 				{if isset($videos)}
 				{volist name='videos' id='v'}
-					<div class='video'><span class='activity'>{$v.video_name}</span></div>
+					<div class='video video_normal'><span class='activity'>{$v.video_name}</span></div>
 				{/volist}
 				{/if}
 			</div><!--id='video_list' 结束 -->
 		</div><!--id='content' 结束-->
+		<div id='three_part'><!--每个动作的标准视频-本人练习-练习指导-->
+			<span id='teacher_video'>标准视频</span><br><span id='my_exercise'>我的练习</span><br><span id='advice'>练习指导</span>
+		</div>
+		<div id='pop1' class="mui-popover mui-scroll">
+			<div id='advice_content'>
+				老师建议
+			</div>
+		</div>
 	</div>
+	<style>
+		/*弹出层1 样式   ：写在score.css文件中不生效*/
+		#pop1 { top: 88vw !important; left: 0 !important; position:fixed; width: 100vw; }
+		#advice_content { width: 86vw; position: absolute; background-color: #fff;
+			left: 7vw; overflow: scroll; max-height: 66vw; border-radius: 6px; }
+		.mui-popover-arrow { display:none; }
+		/*弹出层1 样式 结束*/
+	</style>
 {/block}
 {block name="foot"}{/block}
 {block name="script"}
@@ -82,10 +100,63 @@
 	        };
 		}
 
+		var three_part = $('#three_part');//标准视频-我的练习-指导建议
+
 		//点击通知的 显示学生的通知页面
 		$('#show_notice').click(function () {
 			mui.toast('aaaa', { duration:'short', type:'div' }) ;
 			window.location.href = '/index/notice/index?type=stu';
+		})
+
+		//点击课程导航时 隐藏标准视频-我的练习-指导建议 获取课程的动作数据
+		$('#lession_type').on('click', 'a', function() {
+			let t = $(this);
+			let lesson = t.html();
+		
+			three_part.css('display', 'none');
+			alert(lesson)
+			//执行ajax
+			$.ajax({
+				url:'/index/student/get_lesson',
+				type: 'post',
+				dataType: 'json',
+				data: {lesson: lesson},
+				success:function (info) {
+
+				},
+				error:function(){
+					
+				}
+			})//ajax 结束
+			
+		})
+		
+		//课程 每个动作的点击事件
+		var active_name = ''; //存储每个动作名称
+		var lesson_name = ''; //当前课程名称
+		var videos = $('#video_list .video'); //当前课程的所有动作
+
+		$('#video_list').on('click', '.video', function () {
+			//mui.toast('haha', { duration:'short', type:'div' });
+			let t = $(this);
+			videos.not(t).removeClass('video_active');
+			t.addClass('video_active');
+			three_part.css('display','inline-block');
+			active_name = $(this).find('span').html();
+		})
+
+		//显示 老师的指导建议
+		$('#advice').click(function () {
+			//显示老师给自己当前动作的建议
+			/*$.ajax({
+				url:'/index/index/show_advice',
+				type:'post',
+				data:{
+					stu_num: stu_num,
+					lesson: 
+					}
+			})//ajax 结束*/
+			mui('#pop1').popover('show');
 		})
 	</script>
 {/block}
