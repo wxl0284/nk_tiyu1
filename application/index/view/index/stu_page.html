@@ -18,7 +18,7 @@
 			</div>
 		</div><!--id="head" 结束-->
 		<div id='notice'>
-			<span id='show_notice'>同安h随风倒随风倒沙发沙发色发射点发生风倒沙发沙发色发风倒沙发沙发色发风倒沙发沙发色发身</span>
+			<span id='show_notice'>{$notice}</span>
 		</div>
 		<div id='content'>
 			<div id='lession_type' class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
@@ -37,7 +37,7 @@
 			<div id='video_list'>
 				{if isset($videos)}
 				{volist name='videos' id='v'}
-					<div class='video video_normal'><span class='activity'>{$v.video_name}</span></div>
+					<div class='video video_normal'><span class='activity' video='{$v.video}' pic='{$v.video_pic}'>{$v.video_name}</span></div>
 				{/volist}
 				{/if}
 			</div><!--id='video_list' 结束 -->
@@ -100,6 +100,10 @@
 	        };
 		}
 
+		var video_list_e = $('#video_list');//课程所属的动作列表
+		var active_name = ''; //存储每个动作名称
+		var lesson_name = ''; //当前课程名称
+		var videos = $('#video_list .video'); //当前课程的所有动作
 		var three_part = $('#three_part');//标准视频-我的练习-指导建议
 
 		//点击通知的 显示学生的通知页面
@@ -114,7 +118,7 @@
 			let lesson = t.html();
 		
 			three_part.css('display', 'none');
-			alert(lesson)
+		
 			//执行ajax
 			$.ajax({
 				url:'/index/student/get_lesson',
@@ -122,24 +126,41 @@
 				dataType: 'json',
 				data: {lesson: lesson},
 				success:function (info) {
+					if (info.code == 200)
+					{
+						//将此课程的数据显示在页面
+						let n = info.data.length;
+						let str = '';
 
+						for (let i = 0; i < n; i++)
+						{
+							str += "<div class='video video_normal'><span class='activity' video='"
+								+ info.data[i].video + "' pic='"
+								+ info.data[i].video_pic + "'>"
+								+ info.data[i].video_name + "</span></div>";					
+						}
+
+						video_list_e.html(str);
+
+					}else if(info.code == 100)
+					{
+						mui.toast(info.msg,{ duration:'short', type:'div' });
+					}
 				},
 				error:function(){
-					
+					mui.toast('网络异常~',{ duration:'short', type:'div' });
 				}
 			})//ajax 结束
 			
 		})
 		
 		//课程 每个动作的点击事件
-		var active_name = ''; //存储每个动作名称
-		var lesson_name = ''; //当前课程名称
-		var videos = $('#video_list .video'); //当前课程的所有动作
-
+		//video_list_e.on('click', '.video', function () {
 		$('#video_list').on('click', '.video', function () {
 			//mui.toast('haha', { duration:'short', type:'div' });
 			let t = $(this);
-			videos.not(t).removeClass('video_active');
+			
+			t.siblings().removeClass('video_active');
 			t.addClass('video_active');
 			three_part.css('display','inline-block');
 			active_name = $(this).find('span').html();

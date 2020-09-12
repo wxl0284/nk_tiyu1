@@ -13,6 +13,14 @@ class Student extends Base
     public function get_lesson ()
     {
         $d = input();
-        halt($d);
+        
+        $r = Db::table('tp_video')->where('video_lession', $d['lesson'])->order('v_id', 'asc')->field('video_name, video, video_pic')->select();//此课程的所有动作
+
+        if ($r)
+        {
+            return json(['code' => 200, 'data' => $r]);
+        }else{
+            return json(['code' => 100, 'msg' => '暂未查到动作数据~']);
+        }
     }//get_lesson结束
 }
