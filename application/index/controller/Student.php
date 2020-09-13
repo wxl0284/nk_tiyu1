@@ -23,4 +23,22 @@ class Student extends Base
             return json(['code' => 100, 'msg' => '暂未查到动作数据~']);
         }
     }//get_lesson结束
+
+    /*
+    show_advice() 显示学生某动作的教师指导意见
+    */
+
+    public function show_advice()
+    {
+        $d = input();
+        
+        $r = Db::table('alldata')->where(['lesson' => $d['lesson'], 'stu_num' => $d['stu_num']])->order('id','desc')->field('advice')->find();
+
+        if($r)
+        {
+            return json(['code' => 200, 'data' => $r]);
+        }else{
+            return json(['code' => 100, 'msg' => '未查到指导建议~']);
+        }
+    }//show_advice 结束
 }

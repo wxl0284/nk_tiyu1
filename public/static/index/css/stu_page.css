@@ -26,22 +26,16 @@
 #college { font-size: 3.75vw; color: #39383a; }
 
 #notice { background-image: url('../images/notice_bg.png');background-repeat: no-repeat;
-	background-position-y: 50%; width:98%;
-	height: 6vh;
-	display: table;
-	margin: 0.5vh auto;
-	background-size: 100%;
+	background-position-y: 50%; width:98%; height: 6vh;
+	display: table; 
+	margin: 0.5vh auto;	background-size: 100%;
 	}
 	
-#notice span {padding-top: 1%; padding-left: 10%; display: table-cell;
-	vertical-align: middle;	color: #555; font-size: 3.75vw;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	max-width: 62vw;
+#notice span { padding-top: 1vw; padding-left: 10%; display: table-cell; vertical-align: middle;	color: #555; font-size: 3.75vw;
+	white-space: nowrap; overflow: hidden; text-overflow: ellipsis;	max-width: 62vw; 
 	}
 	
-#content {margin: 0 auto; 	 width: 98%;  background-color: #fff; border-radius: 4px;
+#content {margin: 0 auto 3vw; width: 98%; background-color: #fff; border-radius: 4px;
 	/*height:14.13vh; display: flex; align-items: center;*/
 } 
 
@@ -62,9 +56,11 @@
 
 .video_active { background-image: url('../images/activity_click.png'); }
 
-#three_part { display: none; }
+#three_part { display: none; width: 98vw; height: 27vw; background-color: #fff;
+	vertical-align: middle;	position: relative;	left: 1vw; border-radius: 4px; }
+
+#three_part img { width: 15.6vw; margin: 0 4vw 0 3vw;}
 
 #online_src img { width: 29.8vw; margin: 0 0.6vw 0 2vw; display: inline-block; }
-
 /*老师建议 弹窗样式*/
 /*老师建议 弹窗样式 结束*/

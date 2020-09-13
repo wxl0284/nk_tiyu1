@@ -43,20 +43,24 @@
 			</div><!--id='video_list' 结束 -->
 		</div><!--id='content' 结束-->
 		<div id='three_part'><!--每个动作的标准视频-本人练习-练习指导-->
-			<span id='teacher_video'>标准视频</span><br><span id='my_exercise'>我的练习</span><br><span id='advice'>练习指导</span>
+			<img id='teacher_video' src='/static/index/images/standard_v.png'><img id='my_exercise' src='/static/index/images/my_excersise.png'><img id='advice' src='/static/index/images/advice_pic.png'>
 		</div>
 		<div id='pop1' class="mui-popover mui-scroll">
 			<div id='advice_content'>
-				老师建议
+				<span id='advice_title'>老师建议</span>
+				<span id='advice_info'></span>
 			</div>
 		</div>
+		<video id='play_video' style="width: 100vw;"></video><!--每个动作的标准视频-->
 	</div>
 	<style>
 		/*弹出层1 样式   ：写在score.css文件中不生效*/
-		#pop1 { top: 88vw !important; left: 0 !important; position:fixed; width: 100vw; }
+		#pop1 { top: 78vw !important; left: 0 !important; position:fixed; width: 100vw; }
 		#advice_content { width: 86vw; position: absolute; background-color: #fff;
 			left: 7vw; overflow: scroll; max-height: 66vw; border-radius: 6px; }
 		.mui-popover-arrow { display:none; }
+		#advice_title { text-align: center; display: inherit; font-size: 4vw;}
+		#advice_info { text-indent: 2em; display: inherit; font-size: 3.3vw;}
 		/*弹出层1 样式 结束*/
 	</style>
 {/block}
@@ -105,6 +109,8 @@
 		var lesson_name = ''; //当前课程名称
 		var videos = $('#video_list .video'); //当前课程的所有动作
 		var three_part = $('#three_part');//标准视频-我的练习-指导建议
+		var play_video = $('#play_video');//播放视频的video
+		var teacher_video = $('#teacher_video');
 
 		//点击通知的 显示学生的通知页面
 		$('#show_notice').click(function () {
@@ -155,29 +161,61 @@
 		})
 		
 		//课程 每个动作的点击事件
-		//video_list_e.on('click', '.video', function () {
-		$('#video_list').on('click', '.video', function () {
-			//mui.toast('haha', { duration:'short', type:'div' });
+		var play_video_src = '';
+		video_list_e.on('click', '.video', function () {
 			let t = $(this);
-			
+			play_video.attr('src', t.find('span').attr('video')); //将动作的标准视频的地址赋给video
+
 			t.siblings().removeClass('video_active');
 			t.addClass('video_active');
-			three_part.css('display','inline-block');
+			three_part.css('display','table-cell');
 			active_name = $(this).find('span').html();
 		})
 
+		//标准视频 图片的点击
+		teacher_video.click(function () {
+			play_video[0].play();
+		})
+
+		//video标签的事件监听
+		play_video[0].addEventListener ('pause', function () {
+			play_video.css('display', 'none');//暂停时
+		});
+		
+		play_video[0].addEventListener ('ended', function () {
+			play_video.css('display', 'none');//播放完毕
+		});
+		
+		play_video[0].addEventListener ('stalled', function () {
+			play_video.css('display', 'none');//尝试获取媒体数据失败
+		});	
+
 		//显示 老师的指导建议
 		$('#advice').click(function () {
+			let lesson_v = $.trim($('#lession_type a.mui-active').html());
 			//显示老师给自己当前动作的建议
-			/*$.ajax({
-				url:'/index/index/show_advice',
+			$.ajax({
+				url:'/index/student/show_advice',
 				type:'post',
 				data:{
-					stu_num: stu_num,
-					lesson: 
+					stu_num: '004',
+					lesson: lesson_v
+					},
+				dataType:'json',
+				success:function(info){
+					if(info.code == 200)
+					{
+						$('#advice_info').html(info.data.advice);
+						mui('#pop1').popover('show');
+					}else if(info.code == 100)
+					{
+						mui.toast(info.msg, { duration:'short', type:'div' });
 					}
-			})//ajax 结束*/
-			mui('#pop1').popover('show');
+				},
+				error:function(info){
+					mui.toast('网络异常~', { duration:'short', type:'div' });
+				},
+			})//ajax 结束
 		})
 	</script>
 {/block}
