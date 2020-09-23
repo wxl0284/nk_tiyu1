@@ -11,8 +11,10 @@
 			<div id='info_div'>
 				<img src='/static/index/images/h.png'>
 				<div>
+					<!-- <span id='teacher'>{$stu_name}</span> -->
 					<span id='teacher'>张三</span>
 					<br>
+					<!-- <span id='college'>{$Think.session.faculety}</span> -->
 					<span id='college'>体育学院</span>
 				</div>
 			</div>
@@ -51,7 +53,7 @@
 				<span id='advice_info'></span>
 			</div>
 		</div>
-		<video id='play_video' style="width: 100vw;"></video><!--每个动作的标准视频-->
+		<video id='play_video' style="width: 100vw;display: none;"></video><!--每个动作的标准视频-->
 	</div>
 	<style>
 		/*弹出层1 样式   ：写在score.css文件中不生效*/
@@ -106,11 +108,10 @@
 
 		var video_list_e = $('#video_list');//课程所属的动作列表
 		var active_name = ''; //存储每个动作名称
-		var lesson_name = ''; //当前课程名称
 		var videos = $('#video_list .video'); //当前课程的所有动作
 		var three_part = $('#three_part');//标准视频-我的练习-指导建议
 		var play_video = $('#play_video');//播放视频的video
-		var teacher_video = $('#teacher_video');
+		var teacher_video = $('#teacher_video');		
 
 		//点击通知的 显示学生的通知页面
 		$('#show_notice').click(function () {
@@ -122,7 +123,7 @@
 		$('#lession_type').on('click', 'a', function() {
 			let t = $(this);
 			let lesson = t.html();
-		
+
 			three_part.css('display', 'none');
 		
 			//执行ajax
@@ -161,9 +162,11 @@
 		})
 		
 		//课程 每个动作的点击事件
-		var play_video_src = '';
+		var video_active = '';//每个动作名
+
 		video_list_e.on('click', '.video', function () {
 			let t = $(this);
+			video_active = t.find('span').html();
 			play_video.attr('src', t.find('span').attr('video')); //将动作的标准视频的地址赋给video
 
 			t.siblings().removeClass('video_active');
@@ -174,6 +177,7 @@
 
 		//标准视频 图片的点击
 		teacher_video.click(function () {
+			play_video.css('display','block');
 			play_video[0].play();
 		})
 
@@ -198,8 +202,10 @@
 				url:'/index/student/show_advice',
 				type:'post',
 				data:{
+					//stu_num: stu_num,
 					stu_num: '004',
-					lesson: lesson_v
+					lesson: lesson_v,
+					activity: video_active
 					},
 				dataType:'json',
 				success:function(info){
@@ -216,6 +222,14 @@
 					mui.toast('网络异常~', { duration:'short', type:'div' });
 				},
 			})//ajax 结束
+		})
+
+		//我的练习 点击事件
+		$('#my_exercise').click(function () {
+			let lesson_v = $('#lession_type a.mui-active').html(); //当前课程名称
+			localStorage.setItem('lesson', lesson_v);//将点击的课程名称存起来，在我的练习页面据此显示视频的poster
+
+			window.location.href = '/index/student/exercise_page?stu_num=' + stu_num + '&activity=' + video_active + '&lesson=' + lesson_v;
 		})
 	</script>
 {/block}

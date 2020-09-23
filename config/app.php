@@ -15,7 +15,7 @@
 
 return [
     'student_video_dir' => 'student_video',//保存训练终端上传来学生训练视频的目录
-    'student_video_ip'  => 'http://192.168.8.249',//存储学生训练视频的服务器的ip地址
+    'student_video_ip'  => 'http://192.168.8.249',//存储学生训练视频及图片的服务器的ip地址
     'model_path' => 'common',
     'validate_path' => 'common',
     // 应用名称

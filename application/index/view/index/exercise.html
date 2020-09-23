@@ -1,0 +1,117 @@
+{extend name="template/base" /}
+
+{block name="style"}
+	<link rel="stylesheet" type="text/css" href="/static/index/css/head.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/index/css/exercise.css"/>
+{/block}
+
+{block name="content"}
+	<header id='header' class="mui-bar mui-bar-nav">
+	    <a id='back' class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	    <h1 id='header_title' class="mui-title">我的练习</h1>
+	</header>
+	<div class="mui-content">
+		{if isset($no_data)}
+			<div id='no_data'>暂未查到动作详细数据~</div>
+		{else /}
+			<div>
+				<div id='video_title'>
+					{$data.lesson}/{$data.activity}（动作评分：{$data.score}分）
+				</div>
+				<video id="my_video" poster="" src="{$video_ip}{$data.video}" style="width:88.6vw; height: 50vw;border-radius: 4px;"></video>
+			</div>
+			<script>
+				//根据前一页面点击的课程来显示video的poster
+				var my_video_e = $('#my_video');
+			
+				let lesson = localStorage.getItem('lesson');
+			
+				if (lesson == '网球')
+				{
+					my_video_e.attr('poster', '/static/index/images/tennis.png')
+				}else if(lesson == '舞蹈')
+				{
+					my_video_e.attr('poster', '/static/index/images/dance.png');
+				}
+			</script>
+			
+			<div>
+				<div id='activity_title'>关键动作截图</div>
+				<div id='pic_list'><!--显示各个关键动作截图-->
+					<div class="btn_l btn"></div><!--向左-->
+					<div class="btn_r btn"></div><!--向右-->
+					<div id='img_list'>
+						{foreach $data.png_detail as $k => $v}
+							{if $k > 0 }
+								<div class='pic_info not_show'>
+							{else /}
+								<div class='pic_info'>
+							{/if}
+									<div class='activity_info'>
+										<img src='{$video_ip . $v["pic"]}'>
+										<span class='span2'>{$v.advice}</span>
+									</div>
+								</div>
+						{/foreach}
+						<div style='height: 6vw;'></div><!--为了撑起页面底部-->
+					</div><!--id='img_list' 结束-->
+				</div>
+			</div>
+		{/if}        
+	</div>
+	<script src="/static/admin/js/img_slider.js"></script>
+{/block}
+{block name="foot"}{/block}
+{block name="script"}
+	<script type="text/javascript">
+		//点击视频开始播放	
+		my_video_e.click(function () {
+			$(this)[0].play();
+		})
+
+		//如下：练习视频关键点截图的左右切换显示
+		var pic_info_e = $('.pic_info');
+		var btn_r_e = $('.btn_r');
+		var btn_l_e = $('.btn_l');
+		var pic_info_num = pic_info_e.length;
+		var click_i = 0;//记录左右切换按键点击的次数 
+
+		if ( pic_info_num > 1 )
+		{
+			btn_r_e.css('display', 'block');
+		}
+
+		//向右按钮点击
+		btn_r_e.click(function () {
+			click_i ++;
+			btn_l_e.css('display', 'block');//显示向左按钮
+			pic_info_e.eq(click_i).css('display', 'block');
+			pic_info_e.eq(click_i).siblings().css('display', 'none');
+
+			//向右到头
+			if ( click_i == (pic_info_num-1) )
+			{
+				btn_r_e.css('display', 'none');
+			}
+		})
+
+		//向左按钮点击
+		btn_l_e.click(function () {
+			click_i --;
+			pic_info_e.eq(click_i).css('display', 'block');
+			pic_info_e.eq(click_i).siblings().css('display', 'none');
+
+			//向右到头
+			if ( click_i == 0 )
+			{
+				btn_l_e.css('display', 'none');
+			}
+
+			if ( click_i < (pic_info_num-1) )
+			{
+				btn_r_e.css('display', 'block');
+			}
+		})
+
+	</script>
+{/block}

@@ -307,5 +307,39 @@ function arrayToStr($arr){
     }
     $str .= ']';
     return $str;
+}
 
+/**
+    统一身份认证功能，给数组赋值
+*/
+
+function _addAttributeToArray (array &$a, $name, $v)
+{
+    if ( isset($a[$name]) )
+    {
+        if ( !is_array($a[$name]) )
+        {
+            $existingValue = $a[$name];
+            $a[$name] = array($existingValue);
+        }
+
+        $a[$name][] = trim($v);
+        
+    } else {
+        $a[$name] = trim($v);
+    }
+}
+
+/**
+    判断当前键值是否存在数组中
+*/
+
+function isExistInArray (array &$a, $k)
+{
+    if( isset( $a[$k]) )
+    {
+      return $a[$k];
+    }
+
+    return null;
 }

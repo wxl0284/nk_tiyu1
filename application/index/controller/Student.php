@@ -32,7 +32,8 @@ class Student extends Base
     {
         $d = input();
         
-        $r = Db::table('alldata')->where(['lesson' => $d['lesson'], 'stu_num' => $d['stu_num']])->order('id','desc')->field('advice')->find();
+        $r = Db::table('alldata')->where(['lesson' => $d['lesson'], 'stu_num' => $d['stu_num'], 'activity' => $d['activity']])
+        ->order('id','desc')->field('advice')->find();
 
         if($r)
         {
@@ -41,4 +42,43 @@ class Student extends Base
             return json(['code' => 100, 'msg' => '未查到指导建议~']);
         }
     }//show_advice 结束
+
+    /*
+    exercise_page() 显示学生自己练习视频及图片的页面
+    */
+
+    public function exercise_page ()
+    {
+        $d = input();
+        $d['stu_num'] = 889;//假数据
+        $student_video_ip = config('student_video_ip');//学生练习视频及图片的服务器ip
+
+        $r = Db::table('alldata')->where(['stu_num' => $d['stu_num'], 'lesson' => $d['lesson'], 'activity' => $d['activity']])
+            ->order('id', 'desc')->find();
+ 
+        if ($r)
+        {
+            //处理png_detail字段
+            if ($r['png_detail'])
+            {
+                $t = explode('&', $r['png_detail']);//$t为多个图片的地址及指导意见：/GymData/001pan20200824175637action1.png|图片1各关节角度及误差
+
+                $arr = [];
+
+                foreach($t as $k => $v)
+                {
+                    $t1 = explode('|', $v);
+                    $arr[$k]['pic']    = $t1[0];
+                    $arr[$k]['advice'] = $t1[1];
+                }
+
+                $r['png_detail'] = $arr;
+            }
+
+            return view('index/exercise')->assign(['data' => $r, 'video_ip' => $student_video_ip]);
+        }else{
+            return view('index/exercise')->assign(['no_data' => 1]);
+        }
+        
+    }//exercise_page 结束
 }

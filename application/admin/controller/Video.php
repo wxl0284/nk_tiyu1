@@ -47,15 +47,16 @@ class Video extends Controller
             $w = [ 'video_lession' => $d['lession'] ];
             cookie('lession', $d['lession']);            
         }
-
+        //halt($w);
         $r = Db::table('tp_video')->where($w)->order('v_id', 'desc')->paginate(5);
-
+        
         $num = count($r);
 
         if ( $num > 0 )
         {
             return view()->assign(['list' => $r]);
         }else{
+            cookie('lession', null);
             return view()->assign(['list' => 'no video']);
         }
         
@@ -66,6 +67,12 @@ class Video extends Controller
     */
     public function add_video ()
     {
+        //halt(cookie('lession'));
+        if ( cookie('lession') )
+        {//清楚此控制器index（）方法中的cookie
+            cookie('lession', null);
+        }
+
         $d = input();
 
         $d['video_uploader'] = session('real_name');
@@ -86,6 +93,11 @@ class Video extends Controller
     */
     public function edit_data ()
     {
+        if ( cookie('lession') )
+        {//清楚此控制器index（）方法中的cookie
+            cookie('lession', null);
+        }
+
         $d = input();
 
         $r = Db::table('tp_video')->where('v_id', $d['v_id'])
@@ -120,7 +132,7 @@ class Video extends Controller
     }
 
     /*
-              删除视频数据
+    删除视频数据
     */
     public function del_video ()
     {
