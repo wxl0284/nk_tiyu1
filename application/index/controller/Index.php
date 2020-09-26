@@ -14,7 +14,7 @@ class Index extends Controller
 	*/
 	
     public function index()
-    {
+	{ 
     	if ( $this->request->isMobile() )
     	{
     		//获取扫码后得到的训练终端的ip地址
@@ -115,7 +115,7 @@ class Index extends Controller
     	}
         
 	}//index() 结束
-	
+
 	/*
 	index_0(): 此方法加入了统一身份认证，要替代index()方法
 	*/
@@ -123,277 +123,281 @@ class Index extends Controller
 	public function index_0 ()
 	{
 		$is_mobile = $this->request->isMobile();
-		$ticket = isset($_REQUEST["ticket"]) && !empty($_REQUEST["ticket"]); //$_REQUEST["ticket"] 统一身份认证的请求参数
-		
+		$ticket    = isset($_REQUEST["ticket"]) && !empty($_REQUEST["ticket"]); //$_REQUEST["ticket"] 统一身份认证的请求参数
+
 		//获取扫码后得到的训练终端的ip地址
 		$d = input();
+		$address = isset($d['address']);//是否扫码
+		$ip_from_nankai_url = isset($d['ip']);//统一身份认证请求此方法时携带的参数ip
 
-		if ( isset($d['address']) )
-		{
+		if ( $address )
+		{//扫码后请求此方法
 			$ip = $d['address'];
-		}else{
+		}else if ($ip_from_nankai_url)
+		{//统一身份认证请求此方法
+			$ip = $d['ip'];
+		}
+		else{
 			$ip = '11';//随便给个值，防止页面报错
 		}//获取ip地址 结束
 
+		$user_login = session('user'); //是否登录
+
+		/*
+		接下来根据是否有$d['address']，即是否扫了训练终端的二维码区分用户的使用场景并进行统一身份认证，
+		登录或去电脑端的后台页面
+		*/
+
 		$loginServer     = "https://sso.nankai.edu.cn/sso/login"; //南开统一身份认证登录地址
 		$validateServer  = "https://sso.nankai.edu.cn/sso/serviceValidate"; //南开cas服务器验证地址
-		$address         = "http://体育项目的域名"; //即南开统一身份认证的回调地址
+		//即南开统一身份认证的回调地址。即本项目的域名，参数ip是为了统一身份认证服务器请求此方法时就没法获取此ip了
+		$domain   = "https://aipe.nankai.edu.cn?ip=" . $ip;
 
-		if ( $is_mobile || $ticket || ($is_mobile && session('user')) )
-    	{//手机访问，或者南开统一身份认证回调，
-			if ( $ticket || !session('user') )
-			{//进行统一身份认证
-				try {
-					// url里带上ticket去cas服务验证地址
-					$validate_url = $validateServer. "?ticket=" . $_REQUEST["ticket"] . "&service=" . $address;
-					header("Content-Type:text/html;charset=utf-8");
-					
-					//服务端为https，需加以下配置
-					$arrContextOptions = [
-						"ssl" => [
-							"verify_peer" => false,
-							"verify_peer_name" => false]
-					];
-	
-					$abc = urldecode(file_get_contents( $validate_url, false, stream_context_create($arrContextOptions) ) );//https的请求
-					
-					//$abc = urldecode( file_get_contents($validate_url) ); //http请求时
-						
-					$dom = new \DOMDocument(); //创建一个dom文档
-	
-					$dom->preserveWhiteSpace = false; //忽略xml命名空间
-					$dom->encoding = "utf-8";
-					$dom->loadXML($abc);
-					/*
-					获取用户的唯一标识信息
-					由UIA的配置不同可分为两种：
-					(1)学生：学号；教工：身份证号
-					(2)学生：学号；教工：教工号
-					*/
-	
-					$extra_attributes = []; //存储师生信息数组
-					
-					// CAS服务器只允许utf-8格式的数据
-					$success = $dom->getElementsByTagName("authenticationSuccess");
-	
-					if( $success->length != 0 )
-					{
-						$item      = $success->item(0);
-						$item_user = $item->getElementsByTagName("user");
-						
-						if ( $item_user->length == 0 )
-						{
-							//header("Location: " . $loginServer . "?service=" . $address);
-							$this->redirect( $loginServer . "?service=" . $address );
-						}
-						else 
-						{
-							$attr_nodes = $item->getElementsByTagName("attributes");
-	
-							if ( $attr_nodes->length != 0 )
-							{
-								if ( $attr_nodes->item(0)->hasChildNodes() )
-								{
-									foreach ( $attr_nodes->item(0)->childNodes as $attr_child )
-									{
-										_addAttributeToArray( $extra_attributes, $attr_child->localName, $attr_child->nodeValue );
-									}
-								}
-							}
-						}
-					}//$success->length != 0 结束
-					else
-					{
-						//header("Location:" . $loginServer . "?service=" . $address); //无法访问
-						$this->redirect( $loginServer . "?service=" . $address );
-					}
-			
-					//获取师生的信息	
-					$res['user_name']       = isExistInArray($extra_attributes,"comsys_name"); // 用户姓名
-					$res['teaching_number'] = isExistInArray($extra_attributes,"comsys_teaching_number");// 教工号               
-					$res['student_number']  = isExistInArray($extra_attributes,"comsys_student_number");// 学生号
-					$res['type'] 			= isExistInArray($extra_attributes,"comsys_usertype");// 获取用户类型   1-学生  2-教工                
-					$res['className'] 		= isExistInArray($extra_attributes,"comsys_classname");// 学生班级名称					
-					$res['gradName']        = isExistInArray($extra_attributes,"comsys_gradename");// 学生年级名称
-					$res['faculety']        = isExistInArray($extra_attributes,"comsys_faculetyname");//院系名称
-					//$res['major']         = isExistInArray($extra_attributes,"comsys_disciplinename"); // 学生专业名称
-					
-					//--------------------将用户信息写入session, 查询页面所需数据并显示-----------------
-					session('user', $res['user_name']);
-					
-					if ($res['teaching_number'])
-					{
-						session('stu_num', $res['teaching_number']);
-					}else if ($res['student_number'] )
-					{
-						session('stu_num', $res['student_number']);
-					}
-
-					session('type', $res['type']);
-
-					if ($res['className'])
-					{
-						session('stu_class', $res['className']);
-					}else
-					{
-						session('stu_class', '000'); //给个值，防止前端页面报错
-					}
-
-					if ($res['gradName'])
-					{
-						session('stu_grade', $res['gradName']);
-					}else
-					{
-						session('stu_grade', '000'); //给个值，防止前端页面报错
-					}
-
-					session('faculety', $res['faculety']);
-					//开始查询页面所需数据并显示
-
-					//查询最新一条通知信息
-					$notice = Db::table('tp_notice')->order('id', 'desc')->field('content')->find();
-					$content = '';//通知内容
-
-					if ($notice)
-					{
-						$content = $notice['content'];
-					}
-
-					if ($res['type'] == 1)
-					{//是学生登录
-						//查询tp_video表里的每门课程包括的所有动作
-						$r = Db::table('tp_video')->group('video_lession')->column('video_lession');//所有的课程
-
-						if ($r)
-						{//有课程信息
-							//然后查video_lession字段==$r[0]的所有视频  例如网球
-							$video = Db::table('tp_video')->where('video_lession', $r[0])->field('video_name,video_pic,video')->order('v_id', 'asc')->select();
-							
-							if (!$video)
-							{//有视频信息
-								$video = null;
-							}
-							
-							return view('stu_page')->assign([
-								'ip'        => $ip,
-								'stu_grade' => session('stu_grade'),
-								'stu_class' => session('stu_class'),
-								'stu_num'   => session('stu_num'),
-								'stu_name'  => session('user'),
-								'type'      => $res['type'],
-								'list'      => $r,
-								'videos'    => $video,
-								'lession'   => 1,
-								'notice'    => $content
-								]);
-							
-						}else{//无课程信息
-							
-							return view('stu_page')->assign([
-								'ip'        => $ip,
-								'stu_grade' => session('stu_grade'),
-								'stu_class' => session('stu_class'),
-								'stu_num'   => session('stu_num'),
-								'stu_name'  => session('user'),
-								'type'      => $res['type'],
-								'notice'    => $content
-								]);
-						}
-
-					}else if($res['type'] == 2)
-					{//是老师登录
-						return view()->assign([
-							'ip'        => $ip,
-							'stu_grade' => session('stu_grade'),
-							'stu_class' => session('stu_class'),
-							'stu_num'   => session('stu_num'),
-							'stu_name'  => session('user'),
-							'type'      => $res['type'],
-							'notice'    => $content
-							]);
-					}
-					//--------------------将用户信息写入session, 查询页面所需数据并显示 结束-----------------
-				}//try 结束
-				catch (Exception $e)
-				{//认证失败，再次显示统一身份认证登录页面
-					$this->redirect( $loginServer . "?service=" . $address );
-				}
-				//统一身份认证 结束
-			}else if( $is_mobile && !$ticket && session('user') )
-			{//手机访问，已登录
-				//查询最新一条通知信息
-				$notice = Db::table('tp_notice')->order('id', 'desc')->field('content')->find();
-				$content = '';//通知内容
-
-				if ($notice)
-				{
-					$content = $notice['content'];
-				}
-
-				if (session('type') == 1)
-				{//是学生登录
-					//查询tp_video表里的每门课程包括的所有动作
-					$r = Db::table('tp_video')->group('video_lession')->column('video_lession');//所有的课程
-
-					if ($r)
-					{//有课程信息
-						//然后查video_lession字段==$r[0]的所有视频  例如网球
-						$video = Db::table('tp_video')->where('video_lession', $r[0])->field('video_name,video_pic,video')->order('v_id', 'asc')->select();
-						
-						if (!$video)
-						{//有视频信息
-							$video = null;
-						}
-						
-						return view('stu_page')->assign([
-							'ip'        => $ip,
-							'stu_grade' => session('stu_grade'),
-							'stu_class' => session('stu_class'),
-							'stu_num'   => session('stu_num'),
-							'stu_name'  => session('user'),
-							'type'      => session('type'),
-							'list'      => $r,
-							'videos'    => $video,
-							'lession'   => 1,
-							'notice'    => $content
-							]);
-						
-					}else{//无课程信息
-						
-						return view('stu_page')->assign([
-							'ip'        => $ip,
-							'stu_grade' => session('stu_grade'),
-							'stu_class' => session('stu_class'),
-							'stu_num'   => session('stu_num'),
-							'stu_name'  => session('user'),
-							'type'      => session('type'),
-							'notice'    => $content
-							]);
-					}
-
-				}else if(session('type') == 2)
-				{//是老师登录
-					return view()->assign([
-						'ip'        => $ip,
-						'stu_grade' => session('stu_grade'),
-						'stu_class' => session('stu_class'),
-						'stu_num'   => session('stu_num'),
-						'stu_name'  => session('user'),
-						'type'      => session('type'),
-						'notice'    => $content
-						]);
-				}
-			}//手机访问，已登录 结束
-			
-		}else if ( $is_mobile && !$ticket && !session('user') )
+		if ( $address )//扫码了
 		{
-			$this->redirect( $loginServer . "?service=" . $address );//显示统一身份认证页面
-		}
-		else if ( !$is_mobile && !$ticket )
-		{//pc端访问的话直接进行后台登录
-    		$this->redirect('admin/pub/login');//登录进后台
-    	}
+			if ($user_login)
+			{
+				//已登录  查数据显示首页
+				return $this->show_page($ip);
+			}else
+			{//未登录
+				
+				if ( $ticket )
+				{
+					$this->nankai_validate($loginServer, $validateServer, $domain);//去统一身份认证
+					
+					return $this->show_page($ip);//查数据显示首页
+				}else
+				{
+					$this->redirect( $loginServer . "?service=" . $domain );//显示统一身份认证页面
+				}
+			}//未登录，去统一身份认证 结束
+
+		}//扫码了 代码结束
+		else
+		{//未扫码
+			if ( $is_mobile )
+			{
+				if( $user_login )
+				{
+					//查数据显示首页
+					return $this->show_page($ip);
+				}else
+				{//未登录，去统一身份认证
+					
+					if ( $ticket )
+					{
+						$this->nankai_validate($loginServer, $validateServer, $domain);//去统一身份认证
+						
+						return $this->show_page($ip);//查数据显示首页
+					}else
+					{
+						$this->redirect( $loginServer . "?service=" . $domain );//显示统一身份认证页面
+					}
+				}
+			}//is_mobile 结束
+			else
+			{//不是手机，就去电脑端的后台管理页面
+				$this->redirect('admin/pub/login');//登录进后台
+			}
+		}//未扫码 结束
+		
 	}//index_0() 结束
+
+	/*
+	show_page() 查询首页的数据并根据师生显示不同的页面
+	参数 $ip: 手机扫码得到的训练终端的ip		
+	*/
+
+	protected function show_page($ip)
+	{
+		//查询最新一条通知信息
+		$notice = Db::table('tp_notice')->order('id', 'desc')->field('content')->find();
+		$content = '';//通知内容
+
+		if ($notice)
+		{
+			$content = $notice['content'];
+		}
+
+		if (session('type') == 1)
+		{//是学生登录
+			//查询tp_video表里的每门课程包括的所有动作
+			$r = Db::table('tp_video')->group('video_lession')->column('video_lession');//所有的课程
+
+			if ($r)
+			{//有课程信息
+				//然后查video_lession字段==$r[0]的所有视频  例如网球
+				$video = Db::table('tp_video')->where('video_lession', $r[0])->field('video_name,video_pic,video')->order('v_id', 'asc')->select();
+				
+				if (!$video)
+				{//有视频信息
+					$video = null;
+				}
+				
+				return view('stu_page')->assign([
+					'ip'        => $ip,
+					'stu_grade' => session('stu_grade'),
+					'stu_class' => session('stu_class'),
+					'stu_num'   => session('stu_num'),
+					'stu_name'  => session('user'),
+					'type'      => session('type'),
+					'list'      => $r,
+					'videos'    => $video,
+					'lession'   => 1,
+					'notice'    => $content
+					]);
+				
+			}else{//无课程信息
+				
+				return view('stu_page')->assign([
+					'ip'        => $ip,
+					'stu_grade' => session('stu_grade'),
+					'stu_class' => session('stu_class'),
+					'stu_num'   => session('stu_num'),
+					'stu_name'  => session('user'),
+					'type'      => session('type'),
+					'notice'    => $content
+					]);
+			}
+
+		}else if(session('type') == 2)
+		{//是老师登录
+			return view()->assign([
+				'ip'        => $ip,
+				'stu_grade' => session('stu_grade'),
+				'stu_class' => session('stu_class'),
+				'stu_num'   => session('stu_num'),
+				'stu_name'  => session('user'),
+				'type'      => session('type'),
+				'notice'    => $content
+				]);
+		}
+	}//show_page() 结束
+
+	/*
+	nankai_validate（）进行南开统一身份认证
+	参数：
+	$loginServer  南开统一身份认证登录地址
+	$validateServer 南开cas服务器验证地址
+	$domain       认证的回调地址。即本项目的域名
+	无返回值
+	*/
+
+	protected function nankai_validate ($loginServer, $validateServer, $domain)
+	{
+		try {
+            // url里带上ticket去cas服务验证地址
+            $validate_url = $validateServer. "?ticket=" . $_REQUEST["ticket"] . "&service=" . $domain;
+            header("Content-Type:text/html;charset=utf-8");
+            
+            //服务端为https，需加以下配置
+            $arrContextOptions = [
+                "ssl" => [ "verify_peer" => false, "verify_peer_name" => false ]
+            ];
+
+            $abc = urldecode(file_get_contents( $validate_url, false, stream_context_create($arrContextOptions) ) );//https的请求
+            
+            //$abc = urldecode( file_get_contents($validate_url) ); //http请求时
+                
+            $dom = new \DOMDocument(); //创建一个dom文档
+
+            $dom->preserveWhiteSpace = false; //忽略xml命名空间
+            $dom->encoding = "utf-8";
+            $dom->loadXML($abc);
+            /*
+            获取用户的唯一标识信息
+            由UIA的配置不同可分为两种：
+            (1)学生：学号；教工：身份证号
+            (2)学生：学号；教工：教工号
+            */
+
+            $extra_attributes = []; //存储师生信息数组
+            
+            // CAS服务器只允许utf-8格式的数据
+            $success = $dom->getElementsByTagName("authenticationSuccess");
+
+            if( $success->length != 0 )
+            {
+                $item      = $success->item(0);
+                $item_user = $item->getElementsByTagName("user");
+                
+                if ( $item_user->length == 0 )
+                {
+                    //header("Location: " . $loginServer . "?service=" . $domain);
+                    $this->redirect( $loginServer . "?service=" . $domain );
+                }
+                else 
+                {
+                    $attr_nodes = $item->getElementsByTagName("attributes");
+
+                    if ( $attr_nodes->length != 0 )
+                    {
+                        if ( $attr_nodes->item(0)->hasChildNodes() )
+                        {
+                            foreach ( $attr_nodes->item(0)->childNodes as $attr_child )
+                            {
+                                _addAttributeToArray( $extra_attributes, $attr_child->localName, $attr_child->nodeValue );
+                            }
+                        }
+                    }
+                }
+            }//$success->length != 0 结束
+            else
+            {
+                //header("Location:" . $loginServer . "?service=" . $domain); //无法访问
+                $this->redirect( $loginServer . "?service=" . $domain );
+            }
+
+            //获取师生的信息	
+            $res['user_name']       = isExistInArray($extra_attributes,"comsys_name"); // 用户姓名
+            $res['teaching_number'] = isExistInArray($extra_attributes,"comsys_teaching_number");// 教工号               
+            $res['student_number']  = isExistInArray($extra_attributes,"comsys_student_number");// 学生号
+            $res['type'] 			= isExistInArray($extra_attributes,"comsys_usertype");// 获取用户类型   1-学生  2-教工                
+            $res['className'] 		= isExistInArray($extra_attributes,"comsys_classname");// 学生班级名称					
+            $res['gradName']        = isExistInArray($extra_attributes,"comsys_gradename");// 学生年级名称
+            $res['faculety']        = isExistInArray($extra_attributes,"comsys_faculetyname");//院系名称
+            //$res['major']         = isExistInArray($extra_attributes,"comsys_disciplinename"); // 学生专业名称
+            
+            //--------------------将用户信息写入session
+            session('user', $res['user_name']);
+            
+            if ($res['teaching_number'])
+            {
+                session('stu_num', $res['teaching_number']);
+            }else if ($res['student_number'] )
+            {
+                session('stu_num', $res['student_number']);
+            }
+
+            session('type', $res['type']);
+
+            if ($res['className'])
+            {
+                session('stu_class', $res['className']);
+            }else
+            {
+                session('stu_class', '000'); //给个值，防止前端页面报错
+            }
+
+            if ($res['gradName'])
+            {
+                session('stu_grade', $res['gradName']);
+            }else
+            {
+                session('stu_grade', '000'); //给个值，防止前端页面报错
+            }
+
+			session('faculety', $res['faculety']);
+            
+        }//try 结束
+        catch (Exception $e)
+        {
+            $this->redirect( $loginServer . "?service=" . $domain );//认证失败，再次显示统一身份认证登录页面
+        }
+
+		return $valid;
+	}//nankai_validate() 结束
 
 	//check_user() ilab-x 统一身份认证的代码 
 	public function check_user ()

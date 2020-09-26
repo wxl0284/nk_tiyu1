@@ -18,9 +18,11 @@
 				</div>
 			</div>
 		</div><!--id="head" 结束-->
-		<div id='notice'>
-			<span>{$notice}</span>
-		</div>
+		{if $notice}
+			<div id='notice'>
+				<span id='show_notice'>{$notice}</span>
+			</div>
+		{/if}
 		<div id='content'>
 			<a href='/index/notice/index'><img src='/static/index/images/notice.png'></a><a href='/index/score/index'><img src='/static/index/images/score.png'></a><!--<a href='/index/calcute/index'><img src='/static/index/images/cal.png'></a><a href='http://192.138.8.249/index/memory/index'><img src='/static/index/images/mem.png'></a>-->
 		</div>

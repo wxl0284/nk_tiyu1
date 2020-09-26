@@ -16,12 +16,15 @@ return [
     'hostname'        => '127.0.0.1',
     // 数据库名
     'database'       => 'nk_tiyu',
+    //'database'       => 'aipenankaieducn_80_266',//部署时的
     // 用户名
     'username'       => 'root',
+    //'username'       => 'nk_tiyu',//部署时的
     // 密码
     'password'       => '',
+    //'password'       => 'nk_tiyu666',//部署时的
     // 端口
-    'hostport'        => '',
+    'hostport'        => '3306',
     // 连接dsn
     'dsn'             => '',
     // 数据库连接参数

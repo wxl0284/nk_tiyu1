@@ -29,6 +29,8 @@
 
 .activity_info { text-align: left; width: 88.6vw; margin: 0 auto; }
 
+.span1 { font-size: 3.6vw; font-weight: bold; color:#39383a; line-height: 0vw;}
+
 .span2 { font-size: 3vw; font-weight: bold; color:#8d8d8d; line-height: 0vw;}
 
 .not_show { display: none; }

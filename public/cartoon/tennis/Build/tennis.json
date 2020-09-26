@@ -1,0 +1,13 @@
+{
+"companyName": "DefaultCompany",
+"productName": "惯导动作库",
+"dataUrl": "tennis.data.unityweb",
+"asmCodeUrl": "tennis.asm.code.unityweb",
+"asmMemoryUrl": "tennis.asm.memory.unityweb",
+"asmFrameworkUrl": "tennis.asm.framework.unityweb",
+"TOTAL_MEMORY": 268435456,
+"graphicsAPI": ["WebGL 2.0", "WebGL 1.0"],
+"webglContextAttributes": {"preserveDrawingBuffer": false},
+"splashScreenStyle": "Dark",
+"backgroundColor": "#231F20"
+}

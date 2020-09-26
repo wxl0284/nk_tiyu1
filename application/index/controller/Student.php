@@ -51,6 +51,7 @@ class Student extends Base
     {
         $d = input();
         $d['stu_num'] = 889;//假数据
+        //$d['stu_num'] = session('stu_num');
         $student_video_ip = config('student_video_ip');//学生练习视频及图片的服务器ip
 
         $r = Db::table('alldata')->where(['stu_num' => $d['stu_num'], 'lesson' => $d['lesson'], 'activity' => $d['activity']])
@@ -73,7 +74,22 @@ class Student extends Base
                 }
 
                 $r['png_detail'] = $arr;
-            }
+            }//处理png_detail字段 结束
+
+            //处理png_detail字段
+            if ($r['score'])
+            {
+                $t = explode('_', $r['score']);//88_22_66_77 ， 88为总分
+
+                $n = count($t);
+
+                for($i=1; $i<$n; $i++)
+                {
+                    $r['png_detail'][$i-1]['score_detail'] = $t[$i];
+                }
+
+                $r['score'] = $t[0];
+            }//处理png_detail字段 结束
 
             return view('index/exercise')->assign(['data' => $r, 'video_ip' => $student_video_ip]);
         }else{

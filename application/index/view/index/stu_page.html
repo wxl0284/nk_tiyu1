@@ -19,9 +19,11 @@
 				</div>
 			</div>
 		</div><!--id="head" 结束-->
-		<div id='notice'>
-			<span id='show_notice'>{$notice}</span>
-		</div>
+		{if $notice}
+			<div id='notice'>
+				<span id='show_notice'>{$notice}</span>
+			</div>
+		{/if}
 		<div id='content'>
 			<div id='lession_type' class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
 				<div class="mui-scroll">
@@ -34,7 +36,7 @@
 				</div>
 			</div><!--横向滚动 结束-->
 			<div id='online_src'>
-				<a href='http://tyb.nankai.edu.cn/2020/0110/c19344a263379/page.htm'><img src="/static/index/images/online_video.png"></a><a><img src="/static/index/images/online_cartoon.png"></a>
+				<a href='http://tyb.nankai.edu.cn/2020/0110/c19344a263379/page.htm'><img src="/static/index/images/online_video.png"></a><a id='cartoon_url'><img src="/static/index/images/online_cartoon.png"></a>
 			</div>
 			<div id='video_list'>
 				{if isset($videos)}
@@ -78,7 +80,7 @@
 		var address = "{$ip}";//训练终端的ip
 		
 		var stu_data = '' + address + '_' + stu_num + '_' + stu_name + '_' + type + '_' + stu_grade + '_' + stu_class; //组装要发送的数据
-	
+		
 		window.onload = connect(); //页面加载完成执行connect()
 		
 		//建立socket连接
@@ -195,8 +197,20 @@
 		});	
 
 		//显示 老师的指导建议
+		var cartoon_url = $('#cartoon_url');//标准动画的元素
+		var lesson_name = $('#lession_type a.mui-active');//页面课程名称
+
+		//根据课程名称 为标准动画添加相应的链接
+		if (lesson_name.html() == '网球')
+		{
+			cartoon_url.attr('href', '/cartoon/tennis/index.html');
+		}else if (lesson_name.html() == '啦啦操')
+		{
+			cartoon_url.attr('href', '/cartoon/lalacao/index.html');
+		}
+
 		$('#advice').click(function () {
-			let lesson_v = $.trim($('#lession_type a.mui-active').html());
+			let lesson_v = $.trim(lesson_name.html());
 			//显示老师给自己当前动作的建议
 			$.ajax({
 				url:'/index/student/show_advice',
@@ -226,10 +240,11 @@
 
 		//我的练习 点击事件
 		$('#my_exercise').click(function () {
-			let lesson_v = $('#lession_type a.mui-active').html(); //当前课程名称
+			let lesson_v = lesson_name.html(); //当前课程名称
 			localStorage.setItem('lesson', lesson_v);//将点击的课程名称存起来，在我的练习页面据此显示视频的poster
 
 			window.location.href = '/index/student/exercise_page?stu_num=' + stu_num + '&activity=' + video_active + '&lesson=' + lesson_v;
 		})
+
 	</script>
 {/block}
