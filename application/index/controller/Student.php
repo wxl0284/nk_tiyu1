@@ -33,7 +33,7 @@ class Student extends Base
         $d = input();
         
         $r = Db::table('alldata')->where(['lesson' => $d['lesson'], 'stu_num' => $d['stu_num'], 'activity' => $d['activity']])
-        ->order('id','desc')->field('advice')->find();
+        ->where('advice','<>', null)->order('id','desc')->field('advice')->find();//查有老师指导建议的最新一条
 
         if($r)
         {
@@ -50,7 +50,7 @@ class Student extends Base
     public function exercise_page ()
     {
         $d = input();
-        $d['stu_num'] = 889;//假数据
+        $d['stu_num'] = 888;//假数据
         //$d['stu_num'] = session('stu_num');
         $student_video_ip = config('student_video_ip');//学生练习视频及图片的服务器ip
 

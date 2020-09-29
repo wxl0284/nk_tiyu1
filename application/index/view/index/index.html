@@ -41,7 +41,11 @@
 		
 		var stu_data = '' + address + '_' + stu_num + '_' + stu_name + '_' + type + '_' + stu_grade + '_' + stu_class; //组装要发送的数据
 	
-		window.onload = connect(); //页面加载完成执行connect()
+		if (address.length > 2)
+		{
+			window.onload = connect(); //页面加载完成执行connect()
+			window.location.search = '';//解决返回此页面时url携带?address参数，会再次给训练终端发信号的问题
+		}
 		
 		//建立socket连接
 		function connect ()

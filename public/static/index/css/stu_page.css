@@ -62,5 +62,21 @@
 #three_part img { width: 15.6vw; margin: 0 4vw 0 3vw;}
 
 #online_src img { width: 29.8vw; margin: 0 0.6vw 0 2vw; display: inline-block; }
+
+
+
+
+
+
+#play_video { width: 100vw; position:relative; top:3vh; }
+
+#close_pop { color: #000;
+	font-weight: bold;
+	font-size: 8vw;
+	background-color: #fdd315;
+	border-radius: 50%;
+	position: relative;
+	top: 2vw;
+	left: 89vw; }
 /*老师建议 弹窗样式*/
 /*老师建议 弹窗样式 结束*/

@@ -55,7 +55,11 @@
 				<span id='advice_info'></span>
 			</div>
 		</div>
-		<video id='play_video' style="width: 100vw;display: none;"></video><!--每个动作的标准视频-->
+		<div id='video_pop'><!--标准视频弹层-->
+			<span id='close_pop' class="mui-icon mui-icon-closeempty"></span>
+			<video id='play_video' src='http://192.168.8.166/student_video/888_20200928150558.mp4' controls='controls' style=""></video>
+			<!-- <video id='play_video' controls='controls' style="width: 100vw;display: none;position: absolute; top:30vh;"></video>每个动作的标准视频 -->
+		</div>
 	</div>
 	<style>
 		/*弹出层1 样式   ：写在score.css文件中不生效*/
@@ -65,12 +69,19 @@
 		.mui-popover-arrow { display:none; }
 		#advice_title { text-align: center; display: inherit; font-size: 4vw;}
 		#advice_info { text-indent: 2em; display: inherit; font-size: 3.3vw;}
+
+
+
+
+		/*如下为标准视频弹出层样式*/
+		#video_pop { top: 36vh !important; position:fixed; height: 100vh; background-color: #000;opacity:1; z-index: 999; }
 		/*弹出层1 样式 结束*/
 	</style>
 {/block}
 {block name="foot"}{/block}
 {block name="script"}
 	<script type="text/javascript">
+		
 		var ws = null;
 		var stu_grade = "{$stu_grade}"; //年级
 		var stu_class = "{$stu_class}"; //班级
@@ -81,7 +92,11 @@
 		
 		var stu_data = '' + address + '_' + stu_num + '_' + stu_name + '_' + type + '_' + stu_grade + '_' + stu_class; //组装要发送的数据
 		
-		window.onload = connect(); //页面加载完成执行connect()
+		if (address.length > 2)
+		{
+			window.onload = connect(); //页面加载完成执行connect()
+			window.location.search = '';//解决返回此页面时url携带?address参数，会再次给训练终端发信号的问题
+		}		
 		
 		//建立socket连接
 		function connect ()
@@ -96,11 +111,11 @@
 	        };
 	        
 	        ws.onmessage=function(e){
-	           console.log(e.data);
+	           //console.log(e.data);
 	        };
 	        
 	        ws.onerror=function(e){
-	           console.log(e);
+	           //console.log(e);
 	        };
 	        
 	        ws.onclose=function(e){
@@ -113,7 +128,7 @@
 		var videos = $('#video_list .video'); //当前课程的所有动作
 		var three_part = $('#three_part');//标准视频-我的练习-指导建议
 		var play_video = $('#play_video');//播放视频的video
-		var teacher_video = $('#teacher_video');		
+		var teacher_video = $('#teacher_video');//标准视频的按钮	
 
 		//点击通知的 显示学生的通知页面
 		$('#show_notice').click(function () {
@@ -125,6 +140,15 @@
 		$('#lession_type').on('click', 'a', function() {
 			let t = $(this);
 			let lesson = t.html();
+			let rand = Math.random();
+			//根据课程名称 为标准动画添加相应的链接
+			if (lesson == '网球')
+			{
+				cartoon_url.attr('href', '/cartoon/tennis/index.html?r=' + rand);
+			}else if (lesson == '啦啦操')
+			{
+				cartoon_url.attr('href', '/cartoon/lalacao/index.html?r=' + rand);
+			}
 
 			three_part.css('display', 'none');
 		
@@ -179,45 +203,55 @@
 
 		//标准视频 图片的点击
 		teacher_video.click(function () {
+			//mui.toast('视频加载中...', { duration:'long', type:'div' });
+			mui('#video_pop').popover('show');
 			play_video.css('display','block');
 			play_video[0].play();
 		})
 
 		//video标签的事件监听
 		play_video[0].addEventListener ('pause', function () {
-			play_video.css('display', 'none');//暂停时
+			//play_video.css('display', 'none');//暂停时
 		});
 		
 		play_video[0].addEventListener ('ended', function () {
-			play_video.css('display', 'none');//播放完毕
+			//play_video.css('display', 'none');//播放完毕
 		});
 		
-		play_video[0].addEventListener ('stalled', function () {
+		play_video[0].addEventListener ('error', function () {
 			play_video.css('display', 'none');//尝试获取媒体数据失败
+			mui.toast('视频加载失败...', { duration:'long', type:'div' });
+		});
+
+		//正在请求数据
+		play_video[0].addEventListener ('progress', function () {
+			//play_video.css('display', 'none');
 		});	
+		//video标签的事件监听 结束
 
 		//显示 老师的指导建议
 		var cartoon_url = $('#cartoon_url');//标准动画的元素
 		var lesson_name = $('#lession_type a.mui-active');//页面课程名称
 
 		//根据课程名称 为标准动画添加相应的链接
+		var random = Math.random();
+
 		if (lesson_name.html() == '网球')
 		{
-			cartoon_url.attr('href', '/cartoon/tennis/index.html');
+			cartoon_url.attr('href', '/cartoon/tennis/index.html?r=' + random);
 		}else if (lesson_name.html() == '啦啦操')
 		{
-			cartoon_url.attr('href', '/cartoon/lalacao/index.html');
+			cartoon_url.attr('href', '/cartoon/lalacao/index.html?r=' + random);
 		}
 
 		$('#advice').click(function () {
-			let lesson_v = $.trim(lesson_name.html());
+			let lesson_v = $.trim($('#lession_type a.mui-active').html());
 			//显示老师给自己当前动作的建议
 			$.ajax({
 				url:'/index/student/show_advice',
 				type:'post',
 				data:{
-					//stu_num: stu_num,
-					stu_num: '004',
+					stu_num: stu_num,
 					lesson: lesson_v,
 					activity: video_active
 					},
@@ -240,7 +274,7 @@
 
 		//我的练习 点击事件
 		$('#my_exercise').click(function () {
-			let lesson_v = lesson_name.html(); //当前课程名称
+			let lesson_v = $('#lession_type a.mui-active').html(); //当前课程名称
 			localStorage.setItem('lesson', lesson_v);//将点击的课程名称存起来，在我的练习页面据此显示视频的poster
 
 			window.location.href = '/index/student/exercise_page?stu_num=' + stu_num + '&activity=' + video_active + '&lesson=' + lesson_v;

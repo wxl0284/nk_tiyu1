@@ -56,7 +56,7 @@
 
 #activitys .info_detail { font-size: 3.5vw; font-weight: bold; color:#39383a; }
 
-#stu_video {width: 100vw; position: absolute; top: 8vh; display: none;}
+#stu_video {width: 100vw; position: absolute; top: 35vh; display: none;}
 
 #add_advise { display: none; width: 100%; height: 300%;
  	background-image: url('../images/advise_bg.png'); position: absolute; top: 0;

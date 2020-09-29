@@ -20,20 +20,6 @@
 				</div>
 				<video id="my_video" poster="" src="{$video_ip}{$data.video}" style="width:88.6vw; height: 50vw;border-radius: 4px;"></video>
 			</div>
-			<script>
-				//根据前一页面点击的课程来显示video的poster
-				var my_video_e = $('#my_video');
-			
-				let lesson = localStorage.getItem('lesson');
-			
-				if (lesson == '网球')
-				{
-					my_video_e.attr('poster', '/static/index/images/tennis.png')
-				}else if(lesson == '舞蹈')
-				{
-					my_video_e.attr('poster', '/static/index/images/dance.png');
-				}
-			</script>
 			
 			<div>
 				<div id='activity_title'>关键动作截图</div>
@@ -59,7 +45,24 @@
 					</div><!--id='img_list' 结束-->
 				</div>
 			</div>
-		{/if}        
+		{/if}
+		<script>
+			//根据前一页面点击的课程来显示video的poster
+			var my_video_e = $('#my_video');
+		
+			var lesson_name = localStorage.getItem('lesson');			
+
+			if (my_video_e)
+			{
+				if (lesson_name == '网球')
+				{
+					my_video_e.attr('poster', '/static/index/images/tennis.png')
+				}else if(lesson_name == '啦啦操')
+				{
+					my_video_e.attr('poster', '/static/index/images/dance.png');
+				}
+			}
+		</script>     
 	</div>
 	<script src="/static/admin/js/img_slider.js"></script>
 {/block}

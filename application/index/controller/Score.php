@@ -187,7 +187,7 @@ class Score extends Base
 	}
 	
 	/*
-	 get_10_item(): 获取页面中一个学生的同一个动作的最新10条记录
+	 get_10_item(): 获取页面中一个学生的同一个动作的最新1条记录
 	*/
 	
 	public function get_10_item ()
@@ -210,6 +210,9 @@ class Score extends Base
 			$temp = $temp[0] . '-' . $temp[1] . '-' . $temp[2] . ' ' . $temp[3] . ':' . $temp[4];
 			
 			$r['time'] = $temp;
+			$p = strpos($r['score'], '_');
+
+			$r['score'] = substr($r['score'], 0, $p);//60.8_45.0_77.2_63.2_57.9，获取60.8
 			
 			return json(['code' => 200, 'data' => $r, 'student_video_ip' => config('student_video_ip')]);
 		}else{
