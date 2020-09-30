@@ -55,7 +55,7 @@
 				<span id='advice_info'></span>
 			</div>
 		</div>
-		<div id='video_pop'><!--标准视频弹层-->
+		<div id='video_pop' class="mui-popover mui-scroll"><!--标准视频弹层-->
 			<span id='close_pop' class="mui-icon mui-icon-closeempty"></span>
 			<video id='play_video' src='http://192.168.8.166/student_video/888_20200928150558.mp4' controls='controls' style=""></video>
 			<!-- <video id='play_video' controls='controls' style="width: 100vw;display: none;position: absolute; top:30vh;"></video>每个动作的标准视频 -->
@@ -74,7 +74,8 @@
 
 
 		/*如下为标准视频弹出层样式*/
-		#video_pop { top: 36vh !important; position:fixed; height: 100vh; background-color: #000;opacity:1; z-index: 999; }
+		#video_pop { /*top: 36vh !important;*/top: 0vh !important; position:fixed; height: 100vh; width:100vw; background-color: #000;opacity:1; z-index: 999; }
+		
 		/*弹出层1 样式 结束*/
 	</style>
 {/block}
@@ -144,9 +145,11 @@
 			//根据课程名称 为标准动画添加相应的链接
 			if (lesson == '网球')
 			{
+				play_video.attr('poster', '/static/index/images/tennis.png');//给视频加封面
 				cartoon_url.attr('href', '/cartoon/tennis/index.html?r=' + rand);
 			}else if (lesson == '啦啦操')
 			{
+				play_video.attr('poster', '/static/index/images/dance.png');//给视频加封面
 				cartoon_url.attr('href', '/cartoon/lalacao/index.html?r=' + rand);
 			}
 
@@ -201,12 +204,19 @@
 			active_name = $(this).find('span').html();
 		})
 
-		//标准视频 图片的点击
+		//标准视频 的点击
 		teacher_video.click(function () {
 			//mui.toast('视频加载中...', { duration:'long', type:'div' });
 			mui('#video_pop').popover('show');
-			play_video.css('display','block');
+			//play_video.css('display','block');
 			play_video[0].play();
+		})
+
+		//标准视频弹层 关闭按钮事件
+		$('#close_pop').click(function () {
+			mui('#video_pop').popover('hide');
+			play_video[0].pause();
+			$('#video_pop').css('display', 'none');
 		})
 
 		//video标签的事件监听
