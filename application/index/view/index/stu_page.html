@@ -19,10 +19,16 @@
 				</div>
 			</div>
 		</div><!--id="head" 结束-->
+		
 		{if $notice}
 			<div id='notice'>
-				<span id='show_notice'>{$notice}</span>
+				<span id='show_notice'><a style="line-height: 7vh;">{$notice}</a></span>
 			</div>
+			<script>
+				var notice_url = '';
+				notice_url = location.protocol + '//' + location.hostname + '/index/notice/index?type=stu';
+				$('#show_notice a').attr('href', notice_url);
+			</script>
 		{/if}
 		<div id='content'>
 			<div id='lession_type' class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
@@ -36,7 +42,7 @@
 				</div>
 			</div><!--横向滚动 结束-->
 			<div id='online_src'>
-				<a href='http://tyb.nankai.edu.cn/2020/0110/c19344a263379/page.htm'><img src="/static/index/images/online_video.png"></a><a id='cartoon_url'><img src="/static/index/images/online_cartoon.png"></a>
+				<a href='http://tyb.nankai.edu.cn/2020/0110/c19344a263379/page.htm'><img src="/static/index/images/online_video.png"></a><!--<a id='cartoon_url'><img src="/static/index/images/online_cartoon.png"></a>-->
 			</div>
 			<div id='video_list'>
 				{if isset($videos)}
@@ -131,12 +137,6 @@
 		var play_video = $('#play_video');//播放视频的video
 		var teacher_video = $('#teacher_video');//标准视频的按钮	
 
-		//点击通知的 显示学生的通知页面
-		$('#show_notice').click(function () {
-			mui.toast('aaaa', { duration:'short', type:'div' }) ;
-			window.location.href = '/index/notice/index?type=stu';
-		})
-
 		//点击课程导航时 隐藏标准视频-我的练习-指导建议 获取课程的动作数据
 		$('#lession_type').on('click', 'a', function() {
 			let t = $(this);
@@ -208,7 +208,7 @@
 		teacher_video.click(function () {
 			//mui.toast('视频加载中...', { duration:'long', type:'div' });
 			mui('#video_pop').popover('show');
-			//play_video.css('display','block');
+			play_video.css('display','block');
 			play_video[0].play();
 		})
 
@@ -230,7 +230,7 @@
 		
 		play_video[0].addEventListener ('error', function () {
 			play_video.css('display', 'none');//尝试获取媒体数据失败
-			mui.toast('视频加载失败...', { duration:'long', type:'div' });
+			mui.toast('视频加载失败...', { duration:'short', type:'div' });
 		});
 
 		//正在请求数据
