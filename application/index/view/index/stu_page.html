@@ -11,11 +11,11 @@
 			<div id='info_div'>
 				<img src='/static/index/images/h.png'>
 				<div>
-					<!-- <span id='teacher'>{$stu_name}</span> -->
-					<span id='teacher'>张三</span>
+					<span id='teacher'>{$stu_name}</span>
+					<!-- <span id='teacher'>张三</span> -->
 					<br>
-					<!-- <span id='college'>{$Think.session.faculety}</span> -->
-					<span id='college'>体育学院</span>
+					<span id='college'>{$Think.session.faculety}</span>
+					<!-- <span id='college'>体育学院</span> -->
 				</div>
 			</div>
 		</div><!--id="head" 结束-->
@@ -63,7 +63,7 @@
 		</div>
 		<div id='video_pop' class="mui-popover mui-scroll"><!--标准视频弹层-->
 			<span id='close_pop' class="mui-icon mui-icon-closeempty"></span>
-			<video id='play_video' src='http://192.168.8.166/student_video/888_20200928150558.mp4' controls='controls' style=""></video>
+			<video id='play_video' src='' controls='controls' style=""></video>
 			<!-- <video id='play_video' controls='controls' style="width: 100vw;display: none;position: absolute; top:30vh;"></video>每个动作的标准视频 -->
 		</div>
 	</div>
@@ -201,6 +201,8 @@
 			t.siblings().removeClass('video_active');
 			t.addClass('video_active');
 			three_part.css('display','table-cell');
+			//页面滚动到three_part元素的位置
+			$(document).scrollTop(three_part.offset().top);	
 			active_name = $(this).find('span').html();
 		})
 
@@ -209,6 +211,12 @@
 			//mui.toast('视频加载中...', { duration:'long', type:'div' });
 			mui('#video_pop').popover('show');
 			play_video.css('display','block');
+
+			play_video[0].addEventListener ('error', function () {
+				play_video.css('display', 'none');//尝试获取媒体数据失败
+				mui.toast('视频加载失败...', { duration:'short', type:'div' });
+			});
+			
 			play_video[0].play();
 		})
 
@@ -226,11 +234,6 @@
 		
 		play_video[0].addEventListener ('ended', function () {
 			//play_video.css('display', 'none');//播放完毕
-		});
-		
-		play_video[0].addEventListener ('error', function () {
-			play_video.css('display', 'none');//尝试获取媒体数据失败
-			mui.toast('视频加载失败...', { duration:'short', type:'div' });
 		});
 
 		//正在请求数据

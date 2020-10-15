@@ -32,7 +32,7 @@ class Index extends Controller
     		$stu_class = '天文1班';//班级
     		$stu_num = '888';//学生号
     		$stu_name = 'li'; //学生姓名		
-    		$type = 1; //1表示学生 2 表示教师
+    		$type = 2; //1表示学生 2 表示教师
 			
 			//查询最新一条通知信息
 			$notice = Db::table('tp_notice')->order('id', 'desc')->field('content')->find();
@@ -396,7 +396,6 @@ class Index extends Controller
             $this->redirect( $loginServer . "?service=" . $domain );//认证失败，再次显示统一身份认证登录页面
         }
 
-		return $valid;
 	}//nankai_validate() 结束
 
 	//check_user() ilab-x 统一身份认证的代码 
